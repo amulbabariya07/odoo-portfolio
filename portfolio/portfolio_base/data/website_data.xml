@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Update default website name and favicon -->
+        <record id="website.default_website" model="website">
+            <field name="name">Amul Babariya</field>
+            <field name="favicon" type="base64" file="portfolio_base/static/src/img/amul-babariya-favicon.png"/>
+        </record>
+    </data>
+</odoo>

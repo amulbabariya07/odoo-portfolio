@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portfolio_home_page" name="Portfolio Home Page">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="head">
+                <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
+                <link rel="icon" type="image/png" href="/portfolio_base/static/src/img/amul-babariya-favicon.png"/>
+            </t>
+            <div id="portfolio-wrap" class="portfolio-container" t-if="profile">
+                
+                <!-- Hero Section -->
+                <section id="hero" class="d-flex flex-column justify-content-center align-items-center">
+                    <div class="hero-shapes">
+                        <div class="hero-shape"></div>
+                        <div class="hero-shape"></div>
+                        <div class="hero-shape"></div>
+                        <div class="hero-shape"></div>
+                        <div class="hero-shape"></div>
+                    </div>
+                    <div class="hero-container text-center px-3">
+                        <h3 class="greeting-text mb-2 text-muted" style="font-weight: 600; letter-spacing: 2px;">Hi, I am</h3>
+                        <h1 class="portfolio-title" t-esc="profile.name"/>
+                        <p class="portfolio-subtitle" t-esc="profile.short_intro"/>
+                        <div class="portfolio-social-links">
+                            <a t-if="profile.linkedin_url" t-att-href="profile.linkedin_url" class="linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
+                            <a t-if="profile.github_url" t-att-href="profile.github_url" class="github" target="_blank"><i class="fa fa-github"></i></a>
+                        </div>
+                    </div>
+                    
+                    <a href="#about" class="scroll-down-indicator">
+                        <span class="small fw-bold mb-1">Scroll Down</span>
+                        <i class="fa fa-angle-down"></i>
+                    </a>
+                </section>
+
+                <!-- About Section -->
+                <section id="about" class="about portfolio-section">
+                    <div class="container">
+                        <div class="section-title text-center">
+                            <h2 class="section-heading">About Me</h2>
+                        </div>
+                        <div class="row align-items-center mt-5">
+                            <div class="col-lg-5 mb-5 mb-lg-0">
+                                <div class="profile-image-container">
+                                    <img t-if="profile.image_1920" t-attf-src="/web/image/portfolio.profile/{{profile.id}}/image_1920" class="img-fluid"/>
+                                    <div t-else="" class="profile-img-placeholder text-center p-5 bg-light rounded-4 shadow-sm text-muted">No Image Available</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-7 content ps-lg-5">
+                                <div t-out="profile.about_me" class="mb-5 lead text-muted"/>
+                                <div class="row info-list">
+                                    <div class="col-lg-6">
+                                        <ul>
+                                            <li t-if="profile.date_of_birth"><i class="fa fa-chevron-right"></i> <strong>Birthday:</strong> <span t-esc="profile.date_of_birth"/></li>
+                                            <li t-if="profile.city or profile.state_id or profile.country_id"><i class="fa fa-chevron-right"></i> <strong>Address:</strong> 
+                                                <span>
+                                                    <t t-esc="profile.city"/> <t t-esc="profile.state_id.name"/> <t t-esc="profile.country_id.name"/>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <ul>
+                                            <li t-if="profile.phone"><i class="fa fa-chevron-right"></i> <strong>Phone:</strong> <span t-esc="profile.phone"/></li>
+                                            <li t-if="profile.email"><i class="fa fa-chevron-right"></i> <strong>Email:</strong> <span t-esc="profile.email"/></li>
+                                            <li t-if="profile.total_experience"><i class="fa fa-chevron-right"></i> <strong>Experience:</strong> <span t-esc="profile.total_experience"/></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="mt-5 d-flex align-items-center">
+                                    <a t-if="profile.resume" t-attf-href="/web/content/portfolio.profile/{{profile.id}}/resume?download=true" class="badge-custom text-decoration-none d-inline-block me-3" target="_blank">
+                                        <i class="fa fa-download me-2"></i> Download Resume
+                                    </a>
+                                    <a href="#contact" class="btn btn-outline-primary rounded-pill d-inline-block fw-bold" style="padding: 10px 25px; border-width: 2px;">
+                                        Get in Touch
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Experience Section -->
+                <section id="experience" class="portfolio-section bg-light" t-if="profile.experience_ids">
+                    <div class="container">
+                        <div class="section-title text-center">
+                            <h2 class="section-heading">Experience</h2>
+                        </div>
+                        <div class="portfolio-timeline mt-5">
+                            <t t-set="is_left" t-value="True"/>
+                            <t t-foreach="profile.experience_ids" t-as="exp">
+                                <div t-attf-class="portfolio-timeline-container {{ 'left' if is_left else 'right' }}">
+                                    <div class="portfolio-timeline-content portfolio-card">
+                                        <h4 t-esc="exp.role"/>
+                                        <h5 t-esc="exp.company_name"/>
+                                        <p class="text-muted small mb-4 fw-bold">
+                                            <i class="fa fa-calendar me-2"></i>
+                                            <span t-att-title="exp.start_date">
+                                                <t t-esc="exp.start_date.strftime('%B %Y') if exp.start_date else ''"/>
+                                            </span>
+                                            - 
+                                            <t t-if="exp.is_currently_working">Present</t>
+                                            <t t-else="">
+                                                <span t-att-title="exp.end_date">
+                                                    <t t-esc="exp.end_date.strftime('%B %Y') if exp.end_date else ''"/>
+                                                </span>
+                                            </t>
+                                            <span class="ms-2">(<t t-esc="exp.experience_duration"/>)</span>
+                                        </p>
+                                        <div t-out="exp.description" class="text-secondary"/>
+                                    </div>
+                                </div>
+                                <t t-set="is_left" t-value="not is_left"/>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Education Section -->
+                <section id="education" class="portfolio-section" t-if="profile.education_ids">
+                    <div class="container">
+                        <div class="section-title text-center">
+                            <h2 class="section-heading">Education</h2>
+                        </div>
+                        <div class="row g-4 mt-4">
+                            <t t-foreach="profile.education_ids" t-as="edu">
+                                <div class="col-md-6">
+                                    <div class="portfolio-card edu-card h-100 d-flex align-items-center">
+                                        <div class="edu-icon-box me-4 flex-shrink-0">
+                                            <i class="fa fa-graduation-cap"></i>
+                                        </div>
+                                        <div class="edu-content flex-grow-1">
+                                            <h4 class="edu-degree mb-1" t-esc="edu.degree"/>
+                                            <h6 class="edu-school text-muted mb-3" t-esc="edu.school_name"/>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <span class="badge rounded-pill edu-badge-year">
+                                                    <i class="fa fa-calendar me-1"></i> 
+                                                    <t t-esc="edu.start_year"/> - <t t-esc="'Present' if edu.is_continue else edu.end_year"/>
+                                                </span>
+                                                <span class="badge rounded-pill edu-badge-score" t-if="edu.score">
+                                                    <i class="fa fa-star me-1"></i><t t-esc="edu.score"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Skills Section -->
+                <section id="skills" class="portfolio-section bg-light" t-if="profile.skill_ids">
+                    <div class="container">
+                        <div class="section-title text-center">
+                            <h2 class="section-heading">Skills</h2>
+                        </div>
+                        <div class="row g-4 mt-5">
+                            <t t-foreach="profile.skill_ids" t-as="skill">
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="skill-card flex-column align-items-stretch">
+                                        <div class="d-flex align-items-center w-100">
+                                            <div class="skill-icon-wrapper">
+                                                <t t-if="skill.icon">
+                                                    <img t-attf-src="/web/image/portfolio.skill/#{skill.id}/icon" alt="Skill Icon" style="width: 32px; height: 32px; object-fit: contain;"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <i class="fa fa-code"></i>
+                                                </t>
+                                            </div>
+                                            <div class="skill-content">
+                                                <h4 class="skill-title" t-esc="skill.name"/>
+                                            </div>
+                                            <div class="skill-toggle ms-auto" t-if="skill.description">
+                                                <i class="fa fa-chevron-down"></i>
+                                            </div>
+                                        </div>
+                                        <div class="skill-desc-wrapper" t-if="skill.description">
+                                            <p class="skill-desc text-muted" t-esc="skill.description"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Languages Section -->
+                <section id="languages" class="portfolio-section" t-if="profile.language_ids">
+                    <div class="container">
+                        <div class="section-title text-center">
+                            <h2 class="section-heading">Languages</h2>
+                        </div>
+                        <div class="row g-4 justify-content-center mt-5">
+                            <t t-foreach="profile.language_ids" t-as="plang">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="lang-card">
+                                        <div class="lang-icon">
+                                            <i class="fa fa-language"></i>
+                                        </div>
+                                        <h4 class="lang-name" t-esc="plang.name"/>
+                                        
+                                        <!-- Calculate dots based on level -->
+                                        <t t-set="level_map" t-value="{'beginner': 1, 'intermediate': 2, 'professional': 3, 'native': 4}"/>
+                                        <t t-set="level_num" t-value="level_map.get(plang.level, 0)"/>
+                                        
+                                        <div class="lang-dots">
+                                            <t t-foreach="[0, 1, 2, 3]" t-as="i">
+                                                <span t-attf-class="lang-dot #{'active' if i &lt; level_num else ''}"></span>
+                                            </t>
+                                        </div>
+                                        
+                                        <span class="lang-level-text" t-esc="plang.level.title() if plang.level else ''"/>
+                                        
+                                        <!-- Info Icon and Custom Tooltip -->
+                                        <div class="lang-info-icon" t-if="plang.description">
+                                            <i class="fa fa-info-circle"></i>
+                                            <div class="lang-tooltip">
+                                                <t t-esc="plang.description"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Contact Section -->
+                <section id="contact" class="portfolio-section" style="position: relative; overflow: hidden;">
+                    <div class="contact-header-wrapper mt-5">
+                        <h1 class="contact-bg-text">CONTACT</h1>
+                        <h2 class="contact-fg-text">GET IN TOUCH</h2>
+                    </div>
+
+                    <div class="container pb-5">
+                        <div class="row mt-2 mb-5">
+                            <!-- Left Side: Information -->
+                            <div class="col-lg-5 mb-5 mb-lg-0 pe-lg-4 pt-lg-4">
+                                <h3 class="fw-bold mb-4" style="color: #0f172a; font-size: 2rem;">Let's Connect!</h3>
+                                <p class="text-muted mb-5" style="font-size: 1.1rem; line-height: 1.6;">Whether you have an opportunity to discuss, a question to ask, or simply want to say hi, I'd love to hear from you.</p>
+                                
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 60px; height: 60px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 1.5rem;">
+                                        <i class="fa fa-envelope"></i>
+                                    </div>
+                                    <div class="ms-4">
+                                        <h6 class="mb-1 fw-bold text-uppercase" style="letter-spacing: 1px; color: #64748b; font-size: 0.8rem;">Email Me At</h6>
+                                        <p class="mb-0 fw-bold" style="color: #0f172a; font-size: 1.1rem;" t-esc="profile.email or 'hello@example.com'"></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 60px; height: 60px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 1.5rem;">
+                                        <i class="fa fa-phone"></i>
+                                    </div>
+                                    <div class="ms-4">
+                                        <h6 class="mb-1 fw-bold text-uppercase" style="letter-spacing: 1px; color: #64748b; font-size: 0.8rem;">Call Me At</h6>
+                                        <p class="mb-0 fw-bold" style="color: #0f172a; font-size: 1.1rem;" t-esc="profile.phone or '+91 98765 43210'"></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex align-items-center">
+                                    <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 60px; height: 60px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 1.5rem;">
+                                        <i class="fa fa-map-marker"></i>
+                                    </div>
+                                    <div class="ms-4">
+                                        <h6 class="mb-1 fw-bold text-uppercase" style="letter-spacing: 1px; color: #64748b; font-size: 0.8rem;">Location</h6>
+                                        <t t-set="loc_parts" t-value="[p for p in [profile.city, profile.state_id.name, profile.country_id.name] if p]"/>
+                                        <p class="mb-0 fw-bold" style="color: #0f172a; font-size: 1.1rem;" t-esc="', '.join(loc_parts) if loc_parts else 'Surat, Gujarat, India'"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Side: Form -->
+                            <div class="col-lg-6 offset-lg-1">
+                                <div class="contact-container m-0 w-100" style="padding: 20px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: none; background: #ffffff;">
+
+                                    <!-- Success Message -->
+                                    <div t-if="submitted" class="text-center py-5 success-animation-container" style="min-height: 480px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                        <div class="success-checkmark mb-4">
+                                            <div class="check-icon">
+                                                <span class="icon-line line-tip"></span>
+                                                <span class="icon-line line-long"></span>
+                                                <div class="icon-circle"></div>
+                                                <div class="icon-fix"></div>
+                                            </div>
+                                        </div>
+                                        <h3 class="fw-bold mb-2" style="color: #0f172a;">Message Sent!</h3>
+                                        <p class="text-muted">Thank you for reaching out. I'll get back to you as soon as possible.</p>
+                                        <a href="/#contact" class="btn btn-outline-primary mt-3 px-4 rounded-pill">Send Another Message</a>
+                                    </div>
+
+                                    <form action="/contact/submit" method="post" enctype="multipart/form-data" t-if="not submitted">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <input type="hidden" name="redirect_url" value="/?submitted=1#contact"/>
+                                        <div class="row g-2">
+                                            <!-- Name -->
+                                            <div class="col-md-12">
+                                                <label for="name" class="form-label fw-bold text-muted small mb-1">Full Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="John Doe"/>
+                                            </div>
+                                            
+                                            <!-- Email -->
+                                            <div class="col-md-6">
+                                                <label for="email" class="form-label fw-bold text-muted small mb-1">Email Address</label>
+                                                <input type="email" class="form-control form-control-sm" id="email" name="email" placeholder="john@example.com"/>
+                                            </div>
+                                            
+                                            <!-- Phone -->
+                                            <div class="col-md-6">
+                                                <label for="phone" class="form-label fw-bold text-muted small mb-1">Phone Number</label>
+                                                <input type="tel" class="form-control form-control-sm" id="phone" name="phone" placeholder="+1 (234) 567-8900"/>
+                                                <div class="form-text mt-0" style="font-size: 0.7rem;"><i class="fa fa-info-circle"></i> Email or phone required</div>
+                                            </div>
+
+                                            <!-- Description -->
+                                            <div class="col-12">
+                                                <label for="description" class="form-label fw-bold text-muted small mb-1">Message <span class="text-danger">*</span></label>
+                                                <textarea class="form-control form-control-sm" id="description" name="description" rows="2" placeholder="How can I help you?"></textarea>
+                                            </div>
+
+                                            <!-- File Attachment -->
+                                            <div class="col-12">
+                                                <label for="attachment" class="form-label fw-bold text-muted small mb-1">Attach a file (Image/PDF)</label>
+                                                <input class="form-control form-control-sm" type="file" id="attachment" name="attachment" accept="image/*,.pdf"/>
+                                            </div>
+
+                                            <!-- Submit -->
+                                            <div class="col-12 text-center mt-2">
+                                                <button type="submit" class="btn btn-send btn-sm w-100" style="padding: 8px 20px;"><i class="fa fa-paper-plane me-2"></i> Send Message</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+            <div t-else="" class="container text-center d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
+                <h1 class="text-muted fw-bold mb-4" style="font-size: 3rem;">No Portfolio Found</h1>
+                <p class="text-secondary lead">Please log into the Odoo backend and create a Portfolio Profile to view it here.</p>
+            </div>
+        </t>
+    </template>
+</odoo>

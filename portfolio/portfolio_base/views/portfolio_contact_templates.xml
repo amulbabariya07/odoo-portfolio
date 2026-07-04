@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portfolio_contact_page" name="Contact Us Page">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="head">
+                <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
+                <link rel="stylesheet" href="/portfolio_base/static/src/css/portfolio.css"/>
+            </t>
+            
+            <div class="contact-page-wrapper" style="min-height: 100vh; background: linear-gradient(-45deg, #f8fafc, #f0f9ff, #e0f2fe, #ffffff); background-size: 400% 400%; animation: gradientBG 15s ease infinite; font-family: 'Outfit', sans-serif;">
+                <div class="container py-5">
+                    
+                    <div class="contact-header-wrapper mt-1">
+                        <h1 class="contact-bg-text">CONTACT</h1>
+                        <h2 class="contact-fg-text">GET IN TOUCH</h2>
+                    </div>
+
+                    <div class="row mt-2 mb-5">
+                        <!-- Left Side: Information -->
+                        <div class="col-lg-5 mb-5 mb-lg-0 pe-lg-4 pt-lg-4">
+                            <h3 class="fw-bold mb-4" style="color: #0f172a; font-size: 2rem;">Let's Connect!</h3>
+                            <p class="text-muted mb-5" style="font-size: 1.1rem; line-height: 1.6;">Whether you have an opportunity to discuss, a question to ask, or simply want to say hi, I'd love to hear from you.</p>
+                            
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 60px; height: 60px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 1.5rem;">
+                                    <i class="fa fa-envelope"></i>
+                                </div>
+                                <div class="ms-4">
+                                    <h6 class="mb-1 fw-bold text-uppercase" style="letter-spacing: 1px; color: #64748b; font-size: 0.8rem;">Email Me At</h6>
+                                    <p class="mb-0 fw-bold" style="color: #0f172a; font-size: 1.1rem;" t-esc="profile.email or 'hello@example.com'"></p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 60px; height: 60px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 1.5rem;">
+                                    <i class="fa fa-phone"></i>
+                                </div>
+                                <div class="ms-4">
+                                    <h6 class="mb-1 fw-bold text-uppercase" style="letter-spacing: 1px; color: #64748b; font-size: 0.8rem;">Call Me At</h6>
+                                    <p class="mb-0 fw-bold" style="color: #0f172a; font-size: 1.1rem;" t-esc="profile.phone or '+91 98765 43210'"></p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+                                <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 60px; height: 60px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 1.5rem;">
+                                    <i class="fa fa-map-marker"></i>
+                                </div>
+                                <div class="ms-4">
+                                    <h6 class="mb-1 fw-bold text-uppercase" style="letter-spacing: 1px; color: #64748b; font-size: 0.8rem;">Location</h6>
+                                    <t t-set="loc_parts" t-value="[p for p in [profile.city, profile.state_id.name, profile.country_id.name] if p]"/>
+                                    <p class="mb-0 fw-bold" style="color: #0f172a; font-size: 1.1rem;" t-esc="', '.join(loc_parts) if loc_parts else 'Surat, Gujarat, India'"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Form -->
+                        <div class="col-lg-6 offset-lg-1">
+                            <div class="contact-container m-0 w-100" style="padding: 20px 30px;">
+                                <!-- Success Message -->
+                                <div t-if="submitted" class="text-center py-5 success-animation-container" style="min-height: 480px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                    <div class="success-checkmark mb-4">
+                                        <div class="check-icon">
+                                            <span class="icon-line line-tip"></span>
+                                            <span class="icon-line line-long"></span>
+                                            <div class="icon-circle"></div>
+                                            <div class="icon-fix"></div>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-2" style="color: #0f172a;">Message Sent!</h3>
+                                    <p class="text-muted">Thank you for reaching out. I'll get back to you as soon as possible.</p>
+                                    <a href="/contact" class="btn btn-outline-primary mt-3 px-4 rounded-pill">Send Another Message</a>
+                                </div>
+
+                                <form action="/contact/submit" method="post" enctype="multipart/form-data" t-if="not submitted">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="redirect_url" value="/contact?submitted=1"/>
+                                    <div class="row g-2">
+                                        <!-- Name -->
+                                        <div class="col-md-12">
+                                            <label for="name" class="form-label fw-bold text-muted small mb-1">Full Name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="John Doe"/>
+                                        </div>
+                                        
+                                        <!-- Email -->
+                                        <div class="col-md-6">
+                                            <label for="email" class="form-label fw-bold text-muted small mb-1">Email Address <span class="text-danger">*</span></label>
+                                            <input type="email" class="form-control form-control-sm" id="email" name="email" placeholder="john@example.com"/>
+                                        </div>
+                                        
+                                        <!-- Phone -->
+                                        <div class="col-md-6">
+                                            <label for="phone" class="form-label fw-bold text-muted small mb-1">Phone Number</label>
+                                            <input type="tel" class="form-control form-control-sm" id="phone" name="phone" placeholder="+1 (234) 567-8900"/>
+                                            <div class="form-text mt-0" style="font-size: 0.7rem;"><i class="fa fa-info-circle"></i> Email or phone required</div>
+                                        </div>
+
+                                        <!-- Description -->
+                                        <div class="col-12">
+                                            <label for="description" class="form-label fw-bold text-muted small mb-1">Message <span class="text-danger">*</span></label>
+                                            <textarea class="form-control form-control-sm" id="description" name="description" rows="2" placeholder="How can I help you?"></textarea>
+                                        </div>
+
+                                        <!-- File Attachment -->
+                                        <div class="col-12">
+                                            <label for="attachment" class="form-label fw-bold text-muted small mb-1">Attach a file (Image/PDF)</label>
+                                            <input class="form-control form-control-sm" type="file" id="attachment" name="attachment" accept="image/*,.pdf"/>
+                                        </div>
+
+                                        <!-- Submit -->
+                                        <div class="col-12 text-center mt-2">
+                                            <button type="submit" class="btn btn-send btn-sm w-100" style="padding: 8px 20px;"><i class="fa fa-paper-plane me-2"></i> Send Message</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="/" class="text-decoration-none" style="color: #64748b; font-size: 0.9rem;"><i class="fa fa-arrow-left me-1"></i> Back to Portfolio</a>
+                    </div>
+                </div>
+            </div>
+
+        </t>
+    </template>
+</odoo>

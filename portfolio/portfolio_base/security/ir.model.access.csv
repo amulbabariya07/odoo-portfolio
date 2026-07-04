@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_portfolio_profile,portfolio.profile,model_portfolio_profile,base.group_user,1,1,1,0
+access_portfolio_education,portfolio.education,model_portfolio_education,base.group_user,1,1,1,1
+access_portfolio_experience,portfolio.experience,model_portfolio_experience,base.group_user,1,1,1,1
+access_portfolio_skill,portfolio.skill,model_portfolio_skill,base.group_user,1,1,1,1
+access_portfolio_language,portfolio.language,model_portfolio_language,base.group_user,1,1,1,1
+access_portfolio_profile_public,portfolio.profile,model_portfolio_profile,base.group_public,1,0,0,0
+access_portfolio_education_public,portfolio.education,model_portfolio_education,base.group_public,1,0,0,0
+access_portfolio_experience_public,portfolio.experience,model_portfolio_experience,base.group_public,1,0,0,0
+access_portfolio_skill_public,portfolio.skill,model_portfolio_skill,base.group_public,1,0,0,0
+access_portfolio_language_public,portfolio.language,model_portfolio_language,base.group_public,1,0,0,0
+access_portfolio_contact,portfolio.contact,model_portfolio_contact,base.group_user,1,1,1,1
+access_portfolio_contact_public,portfolio.contact,model_portfolio_contact,base.group_public,0,0,1,0
