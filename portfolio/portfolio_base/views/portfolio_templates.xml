@@ -8,12 +8,28 @@
                 <link rel="preconnect" href="https://fonts.googleapis.com"/>
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
                 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
+                <!-- Three.js Library -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+                <!-- GSAP & ScrollTrigger -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
                 <link rel="icon" type="image/png" href="/portfolio_base/static/src/img/amul-babariya-favicon.png"/>
             </t>
             <div id="portfolio-wrap" class="portfolio-container" t-if="profile">
+                <!-- Scroll Progress Bar -->
+                <div class="scroll-progress-container">
+                    <div class="scroll-progress-bar" id="scrollBar"></div>
+                </div>
+
+                <!-- Animated Background Blobs -->
+                <div class="blob-bg blob-1"></div>
+                <div class="blob-bg blob-2"></div>
+                <div class="blob-bg blob-3"></div>
                 
                 <!-- Hero Section -->
                 <section id="hero" class="d-flex flex-column justify-content-center align-items-center">
+                    <!-- WebGL Canvas for 3D Background -->
+                    <canvas id="webgl-canvas"></canvas>
                     <div class="hero-shapes">
                         <div class="hero-shape"></div>
                         <div class="hero-shape"></div>
@@ -21,13 +37,48 @@
                         <div class="hero-shape"></div>
                         <div class="hero-shape"></div>
                     </div>
-                    <div class="hero-container text-center px-3">
-                        <h3 class="greeting-text mb-2 text-muted" style="font-weight: 600; letter-spacing: 2px;">Hi, I am</h3>
-                        <h1 class="portfolio-title" t-esc="profile.name"/>
-                        <p class="portfolio-subtitle" t-esc="profile.short_intro"/>
-                        <div class="portfolio-social-links">
-                            <a t-if="profile.linkedin_url" t-att-href="profile.linkedin_url" class="linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
-                            <a t-if="profile.github_url" t-att-href="profile.github_url" class="github" target="_blank"><i class="fa fa-github"></i></a>
+                    <div class="hero-container text-center px-3 container"  >
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <h3 class="greeting-text mb-2 text-muted fs-5" style="font-weight: 600; letter-spacing: 2px;">Hi, I am</h3>
+                                <h1 class="portfolio-title display-1 fw-bolder" t-esc="profile.name"/>
+                                <p class="portfolio-subtitle lead fs-4 text-muted mt-3 px-md-3" t-esc="profile.short_intro"/>
+                                <div class="portfolio-social-links mt-4 d-flex justify-content-center align-items-center flex-wrap gap-3">
+                                    <div class="d-flex gap-3">
+                                        <a t-if="profile.linkedin_url" t-att-href="profile.linkedin_url if profile.linkedin_url.startswith('http') else 'https://' + profile.linkedin_url" class="linkedin text-decoration-none shadow-sm" target="_blank" style="border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background-color: #0077b5; color: white;"><i class="fa fa-linkedin"></i></a>
+                                        <a t-if="profile.github_url" t-att-href="profile.github_url if profile.github_url.startswith('http') else 'https://' + profile.github_url" class="github text-decoration-none shadow-sm" target="_blank" style="border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background-color: #333; color: white;"><i class="fa fa-github"></i></a>
+                                    </div>
+                                    <div class="d-flex align-items-center flex-wrap gap-2 ms-md-2" style="border-left: 2px solid rgba(0,0,0,0.1); padding-left: 1rem;">
+                                        <t t-if="profile.total_experience">
+                                            <div class="d-flex align-items-center" style="color: #4b5563; font-size: 1.05rem; font-weight: 500; animation: fadeUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px);">
+                                                <i class="fa fa-briefcase me-2" style="color: #6366f1;"></i>
+                                                <span class="portfolio-counter-text" t-att-data-text="profile.total_experience"><t t-esc="profile.total_experience"/></span>
+                                            </div>
+                                        </t>
+                                        <t t-set="mod_count" t-value="len(request.env['portfolio.module'].sudo().search([])) if 'portfolio.module' in request.env else 0"/>
+                                        <t t-if="mod_count > 0">
+                                            <div class="d-flex align-items-center" style="color: #4b5563; font-size: 1.05rem; font-weight: 500; animation: fadeUp 0.8s ease-out 0.2s forwards; opacity: 0; transform: translateY(20px);">
+                                                <i class="fa fa-cubes me-2" style="color: #10b981;"></i>
+                                                <span class="portfolio-counter-text" t-att-data-text="str(mod_count) + '+ Modules'"><t t-esc="mod_count"/>+ Modules</span>
+                                            </div>
+                                        </t>
+                                        <style>
+                                            @keyframes fadeUp {
+                                                to {
+                                                    opacity: 1;
+                                                    transform: translateY(0);
+                                                }
+                                            }
+                                        </style>
+                                    </div>
+                                </div>
+                                <div class="mt-5 d-flex justify-content-center"  >
+                                    <a href="/my-modules" class="cta-unique-shape">
+                                        <span class="wave-text">See My Work</span>
+                                        <div class="blue-dot"></div>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -43,14 +94,14 @@
                         <div class="section-title text-center">
                             <h2 class="section-heading">About Me</h2>
                         </div>
-                        <div class="row align-items-center mt-5">
-                            <div class="col-lg-5 mb-5 mb-lg-0">
+                        <div class="row mt-5">
+                            <div class="col-lg-5 mb-5 mb-lg-0"  >
                                 <div class="profile-image-container">
                                     <img t-if="profile.image_1920" t-attf-src="/web/image/portfolio.profile/{{profile.id}}/image_1920" class="img-fluid"/>
                                     <div t-else="" class="profile-img-placeholder text-center p-5 bg-light rounded-4 shadow-sm text-muted">No Image Available</div>
                                 </div>
                             </div>
-                            <div class="col-lg-7 content ps-lg-5">
+                            <div class="col-lg-7 content ps-lg-5"   >
                                 <div t-out="profile.about_me" class="mb-5 lead text-muted"/>
                                 <div class="row info-list">
                                     <div class="col-lg-6">
@@ -75,7 +126,7 @@
                                     <a t-if="profile.resume" t-attf-href="/web/content/portfolio.profile/{{profile.id}}/resume?download=true" class="badge-custom text-decoration-none d-inline-block me-3" target="_blank">
                                         <i class="fa fa-download me-2"></i> Download Resume
                                     </a>
-                                    <a href="#contact" class="btn btn-outline-primary rounded-pill d-inline-block fw-bold" style="padding: 10px 25px; border-width: 2px;">
+                                    <a id="flying-contact-btn" href="#contact" class="btn btn-outline-primary rounded-pill d-inline-block fw-bold" style="padding: 10px 25px; border-width: 2px;">
                                         Get in Touch
                                     </a>
                                 </div>
@@ -90,10 +141,10 @@
                         <div class="section-title text-center">
                             <h2 class="section-heading">Experience</h2>
                         </div>
-                        <div class="portfolio-timeline mt-5">
+                        <div class="portfolio-timeline mt-5"  >
                             <t t-set="is_left" t-value="True"/>
                             <t t-foreach="profile.experience_ids" t-as="exp">
-                                <div t-attf-class="portfolio-timeline-container {{ 'left' if is_left else 'right' }}">
+                                <div t-attf-class="portfolio-timeline-container {{ 'left' if is_left else 'right' }}" >
                                     <div class="portfolio-timeline-content portfolio-card">
                                         <h4 t-esc="exp.role"/>
                                         <h5 t-esc="exp.company_name"/>
@@ -117,6 +168,12 @@
                                 <t t-set="is_left" t-value="not is_left"/>
                             </t>
                         </div>
+                        <div class="text-center mt-5 pt-4" >
+                            <a href="/my-modules" class="cta-kinetic">
+                                <span class="kinetic-text">EXPLORE</span>
+                                <span class="kinetic-text outline">MODULES</span>
+                            </a>
+                        </div>
                     </div>
                 </section>
 
@@ -129,21 +186,18 @@
                         <div class="row g-4 mt-4">
                             <t t-foreach="profile.education_ids" t-as="edu">
                                 <div class="col-md-6">
-                                    <div class="portfolio-card edu-card h-100 d-flex align-items-center">
+                                    <div class="portfolio-card edu-card h-100 d-flex align-items-center" >
                                         <div class="edu-icon-box me-4 flex-shrink-0">
                                             <i class="fa fa-graduation-cap"></i>
                                         </div>
                                         <div class="edu-content flex-grow-1">
                                             <h4 class="edu-degree mb-1" t-esc="edu.degree"/>
                                             <h6 class="edu-school text-muted mb-3" t-esc="edu.school_name"/>
-                                            <div class="d-flex flex-wrap gap-2">
-                                                <span class="badge rounded-pill edu-badge-year">
-                                                    <i class="fa fa-calendar me-1"></i> 
+                                            <div class="d-flex flex-column gap-2 mt-2 text-muted small fw-semibold">
+                                                <span><i class="fa fa-calendar fa-fw me-2 text-primary"></i> 
                                                     <t t-esc="edu.start_year"/> - <t t-esc="'Present' if edu.is_continue else edu.end_year"/>
                                                 </span>
-                                                <span class="badge rounded-pill edu-badge-score" t-if="edu.score">
-                                                    <i class="fa fa-star me-1"></i><t t-esc="edu.score"/>
-                                                </span>
+                                                <span t-if="edu.score"><i class="fa fa-star fa-fw me-2 text-primary"></i> <t t-esc="edu.score"/></span>
                                             </div>
                                         </div>
                                     </div>
@@ -156,35 +210,40 @@
                 <!-- Skills Section -->
                 <section id="skills" class="portfolio-section bg-light" t-if="profile.skill_ids">
                     <div class="container">
-                        <div class="section-title text-center">
-                            <h2 class="section-heading">Skills</h2>
+                        <div class="section-title text-center mb-5" >
+                            <span class="badge rounded-pill bg-light text-primary px-3 py-2 mb-3" style="font-weight: 600; font-size: 0.9rem; background-color: #e0f2fe !important;">Skills &amp; Expertise</span>
+                            <h2 class="display-4 fw-bold text-dark mb-3" style="letter-spacing: -1px; line-height: 1.1;">Technical Proficiency</h2>
+                            <p class="text-muted fs-5 mx-auto" style="line-height: 1.6; max-width: 700px;">A comprehensive overview of the programming languages, frameworks, and tools I leverage to build robust and scalable applications.</p>
                         </div>
-                        <div class="row g-4 mt-5">
+                        
+                        <div class="row justify-content-center g-4 mt-4">
                             <t t-foreach="profile.skill_ids" t-as="skill">
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="skill-card flex-column align-items-stretch">
-                                        <div class="d-flex align-items-center w-100">
-                                            <div class="skill-icon-wrapper">
+                                <div class="col-lg-4 col-md-6" >
+                                    <div class="skill-card-simple h-100">
+                                        <div class="card-header-modern d-flex align-items-center w-100 mb-2">
+                                            <div class="card-icon-area me-3" style="width: 50px; height: 50px; flex-shrink: 0;">
                                                 <t t-if="skill.icon">
-                                                    <img t-attf-src="/web/image/portfolio.skill/#{skill.id}/icon" alt="Skill Icon" style="width: 32px; height: 32px; object-fit: contain;"/>
+                                                    <img t-attf-src="/web/image/portfolio.skill/#{skill.id}/icon" alt="Skill Icon" class="skill-icon-img" style="width: 100%; height: 100%; object-fit: contain;"/>
                                                 </t>
                                                 <t t-else="">
-                                                    <i class="fa fa-code"></i>
+                                                    <i class="fa fa-code" style="font-size: 2rem; color: #0ea5e9;"></i>
                                                 </t>
                                             </div>
-                                            <div class="skill-content">
-                                                <h4 class="skill-title" t-esc="skill.name"/>
-                                            </div>
-                                            <div class="skill-toggle ms-auto" t-if="skill.description">
-                                                <i class="fa fa-chevron-down"></i>
-                                            </div>
+                                            <h3 class="card-title-modern mb-0 text-dark fw-bold" style="font-size: 1.5rem;" t-esc="skill.name"/>
                                         </div>
-                                        <div class="skill-desc-wrapper" t-if="skill.description">
-                                            <p class="skill-desc text-muted" t-esc="skill.description"/>
+                                        <hr class="w-100 my-2" style="border-top: 1px solid rgba(0,0,0,0.1); opacity: 1;"/>
+                                        <div class="card-content w-100 mt-2">
+                                            <p class="card-desc-modern text-muted" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0; text-align: left;" t-esc="skill.description or 'Proficient in this skill.'"/>
                                         </div>
                                     </div>
                                 </div>
                             </t>
+                        </div>
+                        
+                        <div class="text-center mt-5 pt-3"  >
+                            <a href="/my-modules" class="cta-laser-border">
+                                <span>Discover My Odoo Modules <i class="fa fa-arrow-right ms-2"></i></span>
+                            </a>
                         </div>
                     </div>
                 </section>
@@ -192,13 +251,13 @@
                 <!-- Languages Section -->
                 <section id="languages" class="portfolio-section" t-if="profile.language_ids">
                     <div class="container">
-                        <div class="section-title text-center">
+                        <div class="section-title text-center" >
                             <h2 class="section-heading">Languages</h2>
                         </div>
                         <div class="row g-4 justify-content-center mt-5">
                             <t t-foreach="profile.language_ids" t-as="plang">
                                 <div class="col-md-3 col-sm-6">
-                                    <div class="lang-card">
+                                    <div class="lang-card" >
                                         <div class="lang-icon">
                                             <i class="fa fa-language"></i>
                                         </div>
@@ -234,11 +293,11 @@
                 <section id="contact" class="portfolio-section" style="position: relative; overflow: hidden;">
                     <div class="contact-header-wrapper mt-5">
                         <h1 class="contact-bg-text">CONTACT</h1>
-                        <h2 class="contact-fg-text">GET IN TOUCH</h2>
+                        <h2 id="contact-target-text" class="contact-fg-text">GET IN TOUCH</h2>
                     </div>
 
                     <div class="container pb-5">
-                        <div class="row mt-2 mb-5">
+                        <div class="row mt-5">
                             <!-- Left Side: Information -->
                             <div class="col-lg-5 mb-5 mb-lg-0 pe-lg-4 pt-lg-4">
                                 <h3 class="fw-bold mb-4" style="color: #0f172a; font-size: 2rem;">Let's Connect!</h3>
@@ -281,7 +340,7 @@
                                 <div class="contact-container m-0 w-100" style="padding: 20px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: none; background: #ffffff;">
 
                                     <!-- Success Message -->
-                                    <div t-if="submitted" class="text-center py-5 success-animation-container" style="min-height: 480px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                    <div id="ajax-success-message" t-attf-class="text-center py-5 success-animation-container {{ 'd-none' if not submitted else '' }}" style="min-height: 480px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                         <div class="success-checkmark mb-4">
                                             <div class="check-icon">
                                                 <span class="icon-line line-tip"></span>
@@ -292,17 +351,17 @@
                                         </div>
                                         <h3 class="fw-bold mb-2" style="color: #0f172a;">Message Sent!</h3>
                                         <p class="text-muted">Thank you for reaching out. I'll get back to you as soon as possible.</p>
-                                        <a href="/#contact" class="btn btn-outline-primary mt-3 px-4 rounded-pill">Send Another Message</a>
+                                        <a href="#" onclick="return resetContactForm();" class="btn btn-outline-primary mt-3 px-4 rounded-pill">Send Another Message</a>
                                     </div>
 
-                                    <form action="/contact/submit" method="post" enctype="multipart/form-data" t-if="not submitted">
+                                    <form id="ajax-contact-form" action="/contact/submit" method="post" enctype="multipart/form-data" t-attf-class="{{ 'd-none' if submitted else '' }}" onsubmit="return validateContactForm(this);">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                         <input type="hidden" name="redirect_url" value="/?submitted=1#contact"/>
                                         <div class="row g-2">
                                             <!-- Name -->
                                             <div class="col-md-12">
                                                 <label for="name" class="form-label fw-bold text-muted small mb-1">Full Name <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="John Doe"/>
+                                                <input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="John Doe" required="required"/>
                                             </div>
                                             
                                             <!-- Email -->
@@ -321,13 +380,26 @@
                                             <!-- Description -->
                                             <div class="col-12">
                                                 <label for="description" class="form-label fw-bold text-muted small mb-1">Message <span class="text-danger">*</span></label>
-                                                <textarea class="form-control form-control-sm" id="description" name="description" rows="2" placeholder="How can I help you?"></textarea>
+                                                <textarea class="form-control form-control-sm" id="description" name="description" rows="2" placeholder="How can I help you?" required="required"></textarea>
                                             </div>
 
-                                            <!-- File Attachment -->
+                                            <!-- Custom File Attachment UI -->
                                             <div class="col-12">
-                                                <label for="attachment" class="form-label fw-bold text-muted small mb-1">Attach a file (Image/PDF)</label>
-                                                <input class="form-control form-control-sm" type="file" id="attachment" name="attachment" accept="image/*,.pdf"/>
+                                                <label class="form-label fw-bold text-muted small mb-1">Attach files (Images/PDFs)</label>
+                                                
+                                                <div class="custom-file-upload-wrapper">
+                                                    <div class="upload-dropzone" id="upload-dropzone" onclick="document.getElementById('attachment').click()">
+                                                        <i class="fa fa-cloud-upload fa-2x mb-2 text-primary"></i>
+                                                        <p class="mb-0 fw-bold" style="color: #334155;">Click to select files or drag and drop</p>
+                                                        <p class="text-muted small mb-0">Images, Videos, PDFs, or ZIPs up to 10MB</p>
+                                                    </div>
+                                                    
+                                                    <!-- Hidden actual input -->
+                                                    <input type="file" id="attachment" name="attachment" accept="image/*,video/*,.pdf,.zip" multiple="multiple" style="display: none;" onchange="handleFilesSelected(event)"/>
+                                                    
+                                                    <!-- Preview Container -->
+                                                    <div id="file-preview-container" class="mt-3 d-flex flex-wrap gap-2"></div>
+                                                </div>
                                             </div>
 
                                             <!-- Submit -->
@@ -342,11 +414,37 @@
                     </div>
                 </section>
                 
+                <!-- Exit Intent Modal -->
+                <div class="modal fade" id="exitIntentModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content text-center p-4 shadow-lg border-0" style="border-radius: 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+                            <div class="modal-body pb-0">
+                                <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="mb-4">
+                                    <i class="fa fa-cubes fa-4x" style="color: #3b82f6;"></i>
+                                </div>
+                                <h3 class="fw-bold mb-3" style="color: #0f172a;">Wait! Have you seen my modules?</h3>
+                                <p class="text-muted mb-4">Before you go, check out my custom Odoo modules and technical solutions that I have built.</p>
+                                <a href="/my-modules" class="btn btn-primary rounded-pill fw-bold px-5 py-2 mb-3 w-100 shadow-sm" style="background: linear-gradient(135deg, #3b82f6, #2563eb); border: none;">Explore My Modules <i class="fa fa-arrow-right ms-2"></i></a>
+                                <button type="button" class="btn btn-link text-muted text-decoration-none" data-bs-dismiss="modal">Maybe later</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div t-else="" class="container text-center d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
                 <h1 class="text-muted fw-bold mb-4" style="font-size: 3rem;">No Portfolio Found</h1>
                 <p class="text-secondary lead">Please log into the Odoo backend and create a Portfolio Profile to view it here.</p>
             </div>
         </t>
+    </template>
+
+    <!-- Hide header and footer specifically on the login page -->
+    <template id="hide_login_header_footer" inherit_id="website.login_layout" name="Hide Header/Footer on Login">
+        <xpath expr="//t[@t-call='website.layout']" position="inside">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+        </xpath>
     </template>
 </odoo>

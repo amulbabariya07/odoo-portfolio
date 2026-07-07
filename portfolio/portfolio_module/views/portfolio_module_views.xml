@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tag Views -->
+    <record id="view_portfolio_module_tag_tree" model="ir.ui.view">
+        <field name="name">portfolio.module.tag.tree</field>
+        <field name="model">portfolio.module.tag</field>
+        <field name="arch" type="xml">
+            <list string="Tags" editable="bottom">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Module Views -->
+    <record id="view_portfolio_module_tree" model="ir.ui.view">
+        <field name="name">portfolio.module.tree</field>
+        <field name="model">portfolio.module</field>
+        <field name="arch" type="xml">
+            <list string="Modules">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="is_featured" widget="boolean_toggle"/>
+                <field name="tag_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_portfolio_module_form" model="ir.ui.view">
+        <field name="name">portfolio.module.form</field>
+        <field name="model">portfolio.module</field>
+        <field name="arch" type="xml">
+            <form string="Module">
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Module Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="version"/>
+                            <field name="is_featured" widget="boolean_toggle"/>
+                            <field name="module_ids" widget="many2many_tags"/>
+                            <field name="tag_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="short_description"/>
+                    </group>
+                    <notebook>
+                        <page string="Long Description">
+                            <field name="long_description" widget="html" options="{'snippets': 'web_editor.snippets', 'cssEdit': true, 'codeview': true}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_portfolio_module" model="ir.actions.act_window">
+        <field name="name">Modules</field>
+        <field name="res_model">portfolio.module</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_portfolio_module_tag" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="res_model">portfolio.module.tag</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_portfolio_module_root" name="Portfolio Module" sequence="10"/>
+    
+    <menuitem id="menu_portfolio_module" name="Modules" parent="menu_portfolio_module_root" action="action_portfolio_module" sequence="10"/>
+    <menuitem id="menu_portfolio_module_tag" name="Tags" parent="menu_portfolio_module_root" action="action_portfolio_module_tag" sequence="20"/>
+
+</odoo>

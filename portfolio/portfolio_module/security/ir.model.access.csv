@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_portfolio_module_tag,portfolio.module.tag,model_portfolio_module_tag,base.group_user,1,1,1,1
+access_portfolio_module,portfolio.module,model_portfolio_module,base.group_user,1,1,1,1
+access_portfolio_module_tag_public,portfolio.module.tag public,model_portfolio_module_tag,base.group_public,1,0,0,0
+access_portfolio_module_public,portfolio.module public,model_portfolio_module,base.group_public,1,0,0,0

@@ -75,14 +75,14 @@
                                     <a href="/contact" class="btn btn-outline-primary mt-3 px-4 rounded-pill">Send Another Message</a>
                                 </div>
 
-                                <form action="/contact/submit" method="post" enctype="multipart/form-data" t-if="not submitted">
+                                <form id="ajax-contact-form" action="/contact/submit" method="post" enctype="multipart/form-data" t-if="not submitted" onsubmit="return validateContactForm(this);">
                                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                     <input type="hidden" name="redirect_url" value="/contact?submitted=1"/>
                                     <div class="row g-2">
                                         <!-- Name -->
                                         <div class="col-md-12">
                                             <label for="name" class="form-label fw-bold text-muted small mb-1">Full Name <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="John Doe"/>
+                                            <input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="John Doe" required="required"/>
                                         </div>
                                         
                                         <!-- Email -->
@@ -101,13 +101,26 @@
                                         <!-- Description -->
                                         <div class="col-12">
                                             <label for="description" class="form-label fw-bold text-muted small mb-1">Message <span class="text-danger">*</span></label>
-                                            <textarea class="form-control form-control-sm" id="description" name="description" rows="2" placeholder="How can I help you?"></textarea>
+                                            <textarea class="form-control form-control-sm" id="description" name="description" rows="2" placeholder="How can I help you?" required="required"></textarea>
                                         </div>
 
-                                        <!-- File Attachment -->
+                                        <!-- Custom File Attachment UI -->
                                         <div class="col-12">
-                                            <label for="attachment" class="form-label fw-bold text-muted small mb-1">Attach a file (Image/PDF)</label>
-                                            <input class="form-control form-control-sm" type="file" id="attachment" name="attachment" accept="image/*,.pdf"/>
+                                            <label class="form-label fw-bold text-muted small mb-1">Attach files (Images/PDFs)</label>
+                                            
+                                            <div class="custom-file-upload-wrapper">
+                                                <div class="upload-dropzone" id="upload-dropzone" onclick="document.getElementById('attachment').click()">
+                                                    <i class="fa fa-cloud-upload fa-2x mb-2 text-primary"></i>
+                                                    <p class="mb-0 fw-bold" style="color: #334155;">Click to select files or drag and drop</p>
+                                                    <p class="text-muted small mb-0">Images, Videos, PDFs, or ZIPs up to 10MB</p>
+                                                </div>
+                                                
+                                                <!-- Hidden actual input -->
+                                                <input type="file" id="attachment" name="attachment" accept="image/*,video/*,.pdf,.zip" multiple="multiple" style="display: none;" onchange="handleFilesSelected(event)"/>
+                                                
+                                                <!-- Preview Container -->
+                                                <div id="file-preview-container" class="mt-3 d-flex flex-wrap gap-2"></div>
+                                            </div>
                                         </div>
 
                                         <!-- Submit -->

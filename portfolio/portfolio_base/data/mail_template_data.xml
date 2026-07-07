@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Admin Notification Template -->
+        <record id="email_template_portfolio_contact_admin" model="mail.template">
+            <field name="name">Portfolio: Admin Notification</field>
+            <field name="model_id" ref="portfolio_base.model_portfolio_contact"/>
+            <field name="subject">New Portfolio Query from {{ object.name }}</field>
+            <field name="email_from">"Portfolio Query" &lt;portfolio.amul@gmail.com&gt;</field>
+            <field name="email_to">amulbabariya07@gmail.com</field>
+            <field name="reply_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+    <div style="background-color: #0ea5e9; padding: 20px; text-align: center; color: white;">
+        <h2 style="margin: 0;">New Portfolio Query</h2>
+    </div>
+    <div style="padding: 20px; background-color: #f8fafc; color: #334155;">
+        <p style="font-size: 16px;">You have received a new contact inquiry from your portfolio website.</p>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold; width: 30%;">Name:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><t t-out="object.name or ''"/></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">Email:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><t t-out="object.email or ''"/></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">Phone:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><t t-out="object.phone or ''"/></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; font-weight: bold; vertical-align: top;">Message:</td>
+                <td style="padding: 10px;"><t t-out="object.description or ''"/></td>
+            </tr>
+        </table>
+    </div>
+</div>
+            </field>
+        </record>
+
+        <!-- Client Auto-Reply Template -->
+        <record id="email_template_portfolio_contact_client" model="mail.template">
+            <field name="name">Portfolio: Client Auto-Reply</field>
+            <field name="model_id" ref="portfolio_base.model_portfolio_contact"/>
+            <field name="subject">Thank you for reaching out!</field>
+            <field name="email_from">"Amul Babariya" &lt;amulbabariya07@gmail.com&gt;</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+    <div style="background-color: #0f172a; padding: 30px; text-align: center; color: white;">
+        <h2 style="margin: 0; font-weight: 800; letter-spacing: 1px;">THANK YOU!</h2>
+    </div>
+    <div style="padding: 30px; background-color: #ffffff; color: #334155; line-height: 1.6;">
+        <p style="font-size: 16px;">Hi <t t-out="object.name or ''"/>,</p>
+        <p style="font-size: 16px;">Thank you for reaching out! I have received your message and I appreciate your interest.</p>
+        <p style="font-size: 16px;">I will review your inquiry and get back to you as soon as possible.</p>
+        <br/>
+        <p style="font-size: 16px; margin-bottom: 0;">Best regards,</p>
+        <p style="font-size: 18px; font-weight: bold; color: #0ea5e9; margin-top: 5px;">Amul Babariya</p>
+    </div>
+</div>
+            </field>
+        </record>
+
+    </data>
+</odoo>

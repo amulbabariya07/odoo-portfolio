@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <template id="index" name="My Modules">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="head">
+                <!-- Three.js Library -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+                <!-- GSAP & ScrollTrigger -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+            </t>
+            <div id="wrap" class="oe_structure oe_empty bg-transparent position-relative portfolio-container">
+                <!-- Animated Background Blobs -->
+                <div class="blob-bg blob-1"></div>
+                <div class="blob-bg blob-2"></div>
+                <div class="blob-bg blob-3"></div>
+                
+                <!-- WebGL Canvas for 3D Background -->
+                <canvas id="webgl-canvas"></canvas>
+                                <section class="pt48 pb32">
+                    <div class="container">
+                        <div class="row align-items-center mb-4">
+                            <div class="col-md-6">
+                                <div class="d-flex gap-2 mb-3">
+                                    <a href="/" class="btn btn-sm btn-light shadow-sm fw-bold px-3 py-2" style="border-radius: 8px; color: #4b5563; border: 1px solid #e5e7eb;">
+                                        <i class="fa fa-arrow-left me-1"></i> Back
+                                    </a>
+                                    <a href="/contact" class="btn btn-sm btn-primary shadow-sm fw-bold px-3 py-2" style="border-radius: 8px; background-color: #3b82f6; border-color: #3b82f6;">
+                                        <i class="fa fa-envelope me-1"></i> Get in Touch
+                                    </a>
+                                </div>
+                                <h1 class="display-5 fw-bold text-dark mb-0">My Latest Modules</h1>
+                            </div>
+                            <div class="col-md-6 mt-4 mt-md-0 d-none d-md-block">
+                                <form action="/my-modules" method="get" class="d-flex justify-content-md-end" id="portfolio_search_form">
+                                    <div class="input-group w-100 shadow-sm" style="max-width: 400px; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;">
+                                        <input type="text" id="portfolio_search_input" name="search" class="form-control form-control-lg border-0 bg-white shadow-none px-3" placeholder="Search modules..." style="font-size: 0.95rem; box-shadow: none !important;" t-att-value="search"/>
+                                        <button type="submit" class="btn bg-white border-0 text-primary shadow-none px-4">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                                <!-- Script moved to bottom -->
+                            </div>
+                        </div>
+                        <!-- Tags Filter (Hidden as per request) -->
+                        <div class="mb-4 d-none">
+                            <!-- Desktop Tags (Pills) -->
+                            <div class="d-none d-md-flex align-items-center text-muted fw-bold flex-wrap gap-2">
+                                <span class="me-3">Tags:</span>
+                                <a t-attf-href="/my-modules?search=#{search or ''}" t-attf-class="text-decoration-none px-3 py-1 rounded-pill border shadow-sm #{not current_tag and 'bg-primary text-white border-primary' or 'bg-white text-dark'}">All</a>
+                                <t t-if="all_tags">
+                                    <t t-foreach="all_tags" t-as="t">
+                                        <a t-attf-href="/my-modules?tag=#{t.id}&amp;search=#{search or ''}" t-attf-class="text-decoration-none px-3 py-1 rounded-pill border shadow-sm #{current_tag == t.id and 'bg-primary text-white border-primary' or 'bg-white text-dark'}">
+                                            <t t-esc="t.name"/>
+                                        </a>
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Mobile Action Bar (Search & Filters) -->
+                <div class="container d-block d-md-none mb-4 mt-n2">
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Search Form -->
+                        <form action="/my-modules" method="get" id="portfolio_search_form_mobile" class="d-flex align-items-center border shadow-sm bg-white p-1 flex-grow-1" style="border-radius: 8px; height: 48px;">
+                            <!-- Search Icon -->
+                            <div class="text-muted d-flex align-items-center justify-content-center h-100 ps-2 pe-1">
+                                <i class="fa fa-search"></i>
+                            </div>
+                            
+                            <!-- Search Input -->
+                            <input type="text" name="search" id="portfolio_search_input_mobile" class="form-control border-0 shadow-none bg-transparent flex-grow-1 px-2" placeholder="Search..." t-att-value="search" style="font-size: 0.95rem; box-shadow: none !important;"/>
+                        </form>
+                        
+                        <!-- Filter Button -->
+                        <a data-bs-toggle="offcanvas" href="#mobileFilterOffcanvas" class="d-flex align-items-center justify-content-center border shadow-sm bg-white text-dark text-decoration-none px-3 position-relative flex-shrink-0" style="border-radius: 8px; height: 48px;">
+                            <i class="fa fa-sliders me-2"></i>
+                            <span class="fw-bold" style="font-size: 0.95rem;">Filter</span>
+                            <t t-if="current_versions or current_ir_module_ids">
+                                <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                                    <span class="visually-hidden">New alerts</span>
+                                </span>
+                            </t>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Universal Search Auto-submit Script -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const inputs = [
+                            { input: document.getElementById('portfolio_search_input'), form: document.getElementById('portfolio_search_form') },
+                            { input: document.getElementById('portfolio_search_input_mobile'), form: document.getElementById('portfolio_search_form_mobile') }
+                        ];
+                        
+                        inputs.forEach(item => {
+                            if (item.input &amp;&amp; item.form) {
+                                // Autofocus only if visible
+                                if (item.input.value &amp;&amp; item.input.offsetParent !== null) {
+                                    const val = item.input.value;
+                                    item.input.focus();
+                                    item.input.value = '';
+                                    item.input.value = val;
+                                }
+                                
+                                let timeout = null;
+                                item.input.addEventListener('input', function() {
+                                    clearTimeout(timeout);
+                                    timeout = setTimeout(function() {
+                                        item.form.submit();
+                                    }, 400); // 400ms debounce
+                                });
+                            }
+                        });
+                    });
+                </script>
+
+                <!-- Mobile Filter Offcanvas -->
+                <div class="offcanvas offcanvas-bottom rounded-top-4 d-md-none" tabindex="-1" id="mobileFilterOffcanvas" style="height: auto; max-height: 85vh;">
+                    <div class="offcanvas-header border-bottom">
+                        <h5 class="offcanvas-title fw-bold" style="font-family: 'Outfit', sans-serif;">Filters</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <t t-if="current_versions or current_ir_module_ids">
+                            <a t-attf-href="/my-modules?search=#{search or ''}&amp;tag=#{current_tag or ''}" class="btn btn-outline-danger w-100 mb-4 rounded-pill">
+                                <i class="fa fa-times me-2"></i> Clear Filters
+                            </a>
+                        </t>
+                        
+                        <!-- Version Filter -->
+                        <t t-if="used_versions">
+                            <h6 class="fw-bold text-dark mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Odoo Version</h6>
+                            <div class="d-flex flex-column gap-3 mb-4">
+                                <t t-foreach="used_versions" t-as="v">
+                                    <div class="form-check form-switch d-flex align-items-center justify-content-between p-0">
+                                        <label class="form-check-label text-dark fw-medium" t-att-for="'mobile_version_' + v" style="cursor: pointer;">
+                                            Odoo <t t-esc="v"/>
+                                        </label>
+                                        <input class="form-check-input sidebar-filter m-0" type="checkbox" name="versions" t-att-value="v" t-att-id="'mobile_version_' + v" t-att-checked="current_versions and v in current_versions" style="width: 40px; height: 20px;"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                        
+                        <!-- Module Filter -->
+                        <t t-if="used_ir_modules">
+                            <h6 class="fw-bold text-dark mb-3 text-uppercase mt-2 border-top pt-4" style="font-size: 0.75rem; letter-spacing: 1px;">App Dependencies</h6>
+                            <div class="d-flex flex-column gap-3 mb-3">
+                                <t t-foreach="used_ir_modules" t-as="mod">
+                                    <div class="form-check form-switch d-flex align-items-center justify-content-between p-0">
+                                        <label class="form-check-label text-dark fw-medium d-flex align-items-center text-truncate" t-att-for="'mobile_mod_' + str(mod.id)" style="cursor: pointer; max-width: 80%;">
+                                            <t t-if="mod.icon">
+                                                <img t-att-src="mod.icon" style="width: 20px; height: 20px; object-fit: contain;" class="me-2"/>
+                                            </t>
+                                            <t t-else="">
+                                                <i class="fa fa-cube me-2 opacity-50"></i>
+                                            </t>
+                                            <t t-esc="mod.shortdesc"/>
+                                        </label>
+                                        <input class="form-check-input sidebar-filter m-0" type="checkbox" name="ir_module_ids" t-att-value="mod.id" t-att-id="'mobile_mod_' + str(mod.id)" t-att-checked="current_ir_module_ids and mod.id in current_ir_module_ids" style="width: 40px; height: 20px;"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <section class="pb64">
+                    <div class="container-fluid px-4 px-md-5">
+                        <div class="row">
+                            <!-- Sidebar Filters (Desktop only) -->
+                            <div class="col-lg-2 col-md-3 mb-5 mb-md-0 d-none d-md-block">
+                                <div class="card border-0 shadow-sm p-4" style="border-radius: 12px; background: #ffffff;">
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h5 class="fw-bold text-dark mb-0" style="font-family: 'Outfit', sans-serif;">Filters</h5>
+                                        <t t-if="current_versions or current_ir_module_ids">
+                                            <a t-attf-href="/my-modules?search=#{search or ''}&amp;tag=#{current_tag or ''}" class="text-danger text-decoration-none" style="font-size: 0.85rem;" title="Clear all filters">
+                                                <i class="fa fa-times"></i> Clear
+                                            </a>
+                                        </t>
+                                    </div>
+                                    
+                                    <!-- Version Filter -->
+                                    <t t-if="used_versions">
+                                        <h6 class="fw-bold text-dark mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Odoo Version</h6>
+                                        <div class="d-flex flex-column gap-2 mb-4">
+                                            <t t-foreach="used_versions" t-as="v">
+                                                <div class="form-check">
+                                                    <input class="form-check-input sidebar-filter" type="checkbox" name="versions" t-att-value="v" t-att-id="'version_' + v" t-att-checked="current_versions and v in current_versions"/>
+                                                    <label class="form-check-label text-muted" t-att-for="'version_' + v" style="cursor: pointer;" onmouseover="this.classList.replace('text-muted', 'text-primary')" onmouseout="this.classList.replace('text-primary', 'text-muted')">
+                                                        <t t-esc="v"/>
+                                                    </label>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
+                                    
+                                    <!-- Module Filter -->
+                                    <t t-if="used_ir_modules">
+                                        <h6 class="fw-bold text-dark mb-3 text-uppercase mt-2" style="font-size: 0.75rem; letter-spacing: 1px;">App Dependencies</h6>
+                                        <div class="d-flex flex-column gap-2">
+                                            <t t-foreach="used_ir_modules" t-as="mod">
+                                                <div class="form-check d-flex align-items-center">
+                                                    <input class="form-check-input sidebar-filter mt-0 me-2" type="checkbox" name="ir_module_ids" t-att-value="mod.id" t-att-id="'mod_' + str(mod.id)" t-att-checked="current_ir_module_ids and mod.id in current_ir_module_ids"/>
+                                                    <label class="form-check-label text-muted d-flex align-items-center text-truncate" t-att-for="'mod_' + str(mod.id)" style="cursor: pointer;" onmouseover="this.classList.replace('text-muted', 'text-primary')" onmouseout="this.classList.replace('text-primary', 'text-muted')">
+                                                        <t t-if="mod.icon">
+                                                            <img t-att-src="mod.icon" style="width: 16px; height: 16px; object-fit: contain;" class="me-2"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <i class="fa fa-cube me-2 opacity-50"></i>
+                                                        </t>
+                                                        <t t-esc="mod.shortdesc"/>
+                                                    </label>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const checkboxes = document.querySelectorAll('.sidebar-filter');
+                                        checkboxes.forEach(function(checkbox) {
+                                            checkbox.addEventListener('change', function() {
+                                                const form = document.createElement('form');
+                                                form.method = 'GET';
+                                                form.action = '/my-modules';
+                                                
+                                                // search input
+                                                const searchInput = document.getElementById('portfolio_search_input');
+                                                if (searchInput &amp;&amp; searchInput.value) {
+                                                    const i = document.createElement('input'); i.type = 'hidden'; i.name = 'search'; i.value = searchInput.value; form.appendChild(i);
+                                                }
+                                                // tag input
+                                                const tagInput = document.querySelector('input[name="tag"]');
+                                                if (tagInput &amp;&amp; tagInput.value) {
+                                                    const i = document.createElement('input'); i.type = 'hidden'; i.name = 'tag'; i.value = tagInput.value; form.appendChild(i);
+                                                }
+                                                
+                                                // Sync checked state across mobile and desktop
+                                                document.querySelectorAll(`.sidebar-filter[name="${this.name}"][value="${this.value}"]`).forEach(cb => cb.checked = this.checked);
+                                                
+                                                const added = new Set();
+                                                document.querySelectorAll('.sidebar-filter:checked').forEach(function(cb) {
+                                                    const key = cb.name + '=' + cb.value;
+                                                    if (!added.has(key)) {
+                                                        added.add(key);
+                                                        const i = document.createElement('input');
+                                                        i.type = 'hidden';
+                                                        i.name = cb.name;
+                                                        i.value = cb.value;
+                                                        form.appendChild(i);
+                                                    }
+                                                });
+                                                document.body.appendChild(form);
+                                                form.submit();
+                                            });
+                                        });
+                                    });
+                                </script>
+                            </div>
+                            
+                            <!-- Main Content Grid -->
+                            <div class="col-lg-10 col-md-9">
+                                <div class="row g-4">
+                                    <t t-foreach="modules" t-as="module">
+                                        <div class="col-lg-4 col-md-6 col-12">
+                                    <article class="card h-100 border-0 shadow-sm" style="border-radius: 8px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);">
+                                        <a t-attf-href="/my-module/#{module.id}" class="text-decoration-none text-dark d-flex flex-column h-100 module-blog-card">
+                                                                                        <div class="position-relative overflow-hidden" style="aspect-ratio: 16/9; background-color: #f0f2f5;">
+                                                <t t-if="module.image">
+                                                    <img t-att-src="image_data_uri(module.image)" class="w-100 h-100" style="object-fit: cover; transition: transform 0.5s ease;" alt="Module Image"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="d-flex align-items-center justify-content-center w-100 h-100">
+                                                        <i class="fa fa-code text-muted" style="font-size: 4rem;"></i>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                                                                        <div class="card-body d-flex flex-column p-4">
+                                                <h5 class="card-title fw-bold text-dark mb-3" style="font-family: 'Outfit', sans-serif;" t-esc="module.name"/>
+                                                
+                                                <!-- Version & App Dependencies in one line -->
+                                                <div class="mt-auto d-flex flex-wrap align-items-center gap-2 pb-2">
+                                                    <t t-if="module.version">
+                                                        <span class="badge bg-light text-dark border shadow-sm px-2 py-1" style="font-size: 0.85rem; font-weight: 500; border-radius: 6px;">
+                                                            <i class="fa fa-code-fork text-muted me-1"></i> Odoo <t t-esc="module.version"/>
+                                                        </span>
+                                                    </t>
+                                                    <t t-if="module.module_ids">
+                                                        <t t-foreach="module.module_ids" t-as="app">
+                                                            <span class="badge bg-white text-dark border shadow-sm px-2 py-1 d-inline-flex align-items-center" style="font-size: 0.85rem; font-weight: 500; border-radius: 6px;">
+                                                                <t t-if="app.icon">
+                                                                    <img t-att-src="app.icon" style="width: 16px; height: 16px; object-fit: contain;" class="me-1"/>
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <i class="fa fa-cube text-muted me-1"></i>
+                                                                </t>
+                                                                <t t-esc="app.shortdesc"/>
+                                                            </span>
+                                                        </t>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </article>
+                                </div>
+                            </t>
+                            <t t-if="not modules">
+                                <div class="col-12 text-center text-muted py-5">
+                                    <i class="fa fa-folder-open-o fs-1 mb-3"></i>
+                                    <p class="fs-4">No modules found.</p>
+                                </div>
+                            </t>
+                                </div>
+                                
+                                <div class="d-flex justify-content-center mt-5" t-if="pager">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                            </div>
+        </t>
+    </template>
+    <template id="detail" name="Module Detail">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="head">
+                <!-- Three.js Library -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+                <!-- GSAP & ScrollTrigger -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+            </t>
+            <div id="wrap" class="oe_structure oe_empty bg-transparent position-relative portfolio-container">
+                <!-- Animated Background Blobs -->
+                <div class="blob-bg blob-1"></div>
+                <div class="blob-bg blob-2"></div>
+                <div class="blob-bg blob-3"></div>
+                
+                <!-- WebGL Canvas for 3D Background -->
+                <canvas id="webgl-canvas"></canvas>
+                <section class="s_cover position-relative d-flex align-items-center justify-content-center" style="min-height: 40vh; background-color: rgba(250, 252, 255, 0.6); overflow: hidden; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                    <div class="position-absolute top-0 start-0 p-4 d-flex gap-2" style="z-index: 2;">
+                        <a href="/my-modules" class="btn btn-sm btn-light shadow-sm fw-bold px-3 py-2" style="border-radius: 8px; color: #4b5563;">
+                            <i class="fa fa-arrow-left me-1"></i> Back
+                        </a>
+                        <a href="/contact" class="btn btn-sm btn-primary shadow-sm fw-bold px-3 py-2" style="border-radius: 8px; background-color: #3b82f6; border-color: #3b82f6;">
+                            <i class="fa fa-envelope me-1"></i> Get in Touch
+                        </a>
+                    </div>
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 0; opacity: 0.35;">
+                        <img src="/portfolio_module/static/img/odoo_bg.png" class="w-100 h-100" style="object-fit: cover; filter: blur(3px); transform: scale(1.05);" alt="Background"/>
+                    </div>
+                    <div class="container position-relative text-center text-dark p-5" style="z-index: 1;">
+                        <h1 class="display-3 fw-bold mb-3 mt-4" style="font-family: 'Outfit', sans-serif;" t-esc="module.name"/>
+                        <p class="lead fw-light mb-0 mx-auto" style="max-width: 800px; color: #4b5563;" t-esc="module.short_description"/>
+                    </div>
+                </section>
+                <section class="pt64 pb96">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8 col-md-10">
+                                <!-- Breadcrumb (Outside Box) -->
+                                <div class="mb-3 text-muted small">
+                                    <div class="fw-bold">
+                                        <a href="/my-modules" class="text-decoration-none text-muted hover-primary">All Modules</a> / 
+                                        <a href="/my-modules" class="text-decoration-none text-muted hover-primary">Apps</a> / 
+                                        <span class="text-dark" t-esc="module.name"/>
+                                    </div>
+                                </div>
+                                <!-- Version, Modules, and Tags (All on same line) -->
+                                <div class="mb-4 d-flex flex-wrap align-items-center gap-2">
+                                    <t t-if="module.version">
+                                        <span class="badge bg-light text-dark border shadow-sm px-2 py-1" style="font-size: 0.9rem; font-weight: 500; border-radius: 6px;">
+                                            <i class="fa fa-code-fork text-muted me-1"></i> Odoo <t t-esc="module.version"/>
+                                        </span>
+                                    </t>
+                                    <t t-if="module.module_ids">
+                                        <t t-foreach="module.module_ids" t-as="app">
+                                            <span class="badge bg-white text-dark border shadow-sm px-2 py-1 d-inline-flex align-items-center" style="font-size: 0.9rem; font-weight: 500; border-radius: 6px;">
+                                                <t t-if="app.icon">
+                                                    <img t-att-src="app.icon" style="width: 16px; height: 16px; object-fit: contain;" class="me-1"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <i class="fa fa-cube text-muted me-1"></i>
+                                                </t>
+                                                <t t-esc="app.shortdesc"/>
+                                            </span>
+                                        </t>
+                                    </t>
+                                    <t t-if="module.tag_ids">
+                                        <t t-foreach="module.tag_ids" t-as="tag">
+                                            <a t-attf-href="/my-modules?search=#{tag.name}" class="badge bg-primary text-decoration-none px-3 py-2 fw-medium shadow-sm portfolio-tag-badge" style="font-size: 0.9rem; border-radius: 6px;">
+                                                <t t-esc="tag.name"/>
+                                            </a>
+                                        </t>
+                                    </t>
+                                </div>
+
+                                <!-- Divider Line -->
+                                <hr style="border: 0; border-top: 2px solid #6e6f71ff; margin: 1rem 0 3rem 0; width: 100%;"/>
+
+                                <!-- Clean Content Container -->
+                                <div>
+                                    <div class="fs-5 o_portfolio_blog_content portfolio-enhanced-content">
+                                        <div t-field="module.long_description" class="oe_no_empty"/>
+                                        <t t-if="not module.long_description">
+                                            <p class="text-muted fst-italic">No detailed description available for this module yet.</p>
+                                        </t>
+                                    </div>
+                                </div>
+                                
+                                <!-- Back and Up Buttons (Bottom) -->
+                                <div class="mt-5 d-flex justify-content-between align-items-center pt-4 pb-4" style="border-top: 1px solid #e5e7eb;">
+                                    <div class="d-flex gap-3">
+                                        <a href="/my-modules" class="btn btn-outline-primary fw-bold text-uppercase d-inline-flex align-items-center justify-content-center" 
+                                           style="border-radius: 8px; padding: 10px 25px; font-size: 1rem; letter-spacing: 1px;">
+                                            <i class="fa fa-arrow-left me-2"></i> Back
+                                        </a>
+                                        <a href="/contact" class="btn btn-primary fw-bold text-uppercase d-inline-flex align-items-center justify-content-center shadow-sm" 
+                                           style="border-radius: 8px; padding: 10px 25px; font-size: 1rem; letter-spacing: 1px;">
+                                            <i class="fa fa-envelope me-2"></i> Get in Touch
+                                        </a>
+                                    </div>
+                                    
+                                    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="btn btn-primary shadow-sm" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;" title="Scroll to top">
+                                        <i class="fa fa-arrow-up"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portfolio_home_page_inherit_modules" inherit_id="portfolio_base.portfolio_home_page" name="Portfolio Home Page Latest Modules">
+        <!-- Remove the explore button from the experience section -->
+        <xpath expr="//section[@id='experience']//div[hasclass('text-center')][a[hasclass('cta-kinetic')]]" position="replace"/>
+        
+        <xpath expr="//section[@id='experience']" position="after">
+            <t t-set="latest_modules" t-value="request.env['portfolio.module'].sudo().search([('is_featured', '=', True)], limit=6, order='sequence, id')"/>
+            <section id="latest-modules" class="portfolio-section" t-if="latest_modules">
+                <div class="container" style="max-width: 1050px;"> <!-- Custom max-width to naturally decrease card size -->
+                    <div class="section-title text-center"  >
+                        <h2 class="section-heading">My Latest Work</h2>
+                    </div>
+                    <!-- Changed mt-5 to mt-3 to remove the excess space -->
+                    <div class="row g-4 mt-3">
+                        <t t-foreach="latest_modules" t-as="module">
+                            <div class="col-lg-4 col-md-6 col-12" >
+                                <article class="card h-100 border-0 shadow-sm" style="border-radius: 8px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);">
+                                    <a t-attf-href="/my-module/#{module.id}" class="text-decoration-none text-dark d-flex flex-column h-100 module-blog-card">
+                                        <div class="position-relative overflow-hidden" style="aspect-ratio: 16/9; background-color: #f0f2f5;">
+                                            <t t-if="module.image">
+                                                <img t-att-src="image_data_uri(module.image)" class="w-100 h-100" style="object-fit: cover; transition: transform 0.5s ease;" alt="Module Image"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="d-flex align-items-center justify-content-center w-100 h-100">
+                                                    <i class="fa fa-code text-muted" style="font-size: 4rem;"></i>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <div class="card-body d-flex flex-column p-4">
+                                            <h5 class="card-title fw-bold text-dark mb-3" style="font-family: 'Outfit', sans-serif;" t-esc="module.name"/>
+                                            <div class="mt-auto d-flex flex-wrap align-items-center gap-2 pb-2">
+                                                <t t-if="module.version">
+                                                    <span class="badge bg-light text-dark border shadow-sm px-2 py-1" style="font-size: 0.85rem; font-weight: 500; border-radius: 6px;">
+                                                        <i class="fa fa-code-fork text-muted me-1"></i> Odoo <t t-esc="module.version"/>
+                                                    </span>
+                                                </t>
+                                                <t t-if="module.module_ids">
+                                                    <t t-foreach="module.module_ids" t-as="app">
+                                                        <span class="badge bg-white text-dark border shadow-sm px-2 py-1 d-inline-flex align-items-center" style="font-size: 0.85rem; font-weight: 500; border-radius: 6px;">
+                                                            <t t-if="app.icon">
+                                                                <img t-att-src="app.icon" style="width: 16px; height: 16px; object-fit: contain;" class="me-1"/>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <i class="fa fa-cube text-muted me-1"></i>
+                                                            </t>
+                                                            <t t-esc="app.shortdesc"/>
+                                                        </span>
+                                                    </t>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </article>
+                            </div>
+                        </t>
+                    </div>
+                    
+                    <t t-set="total_modules_count" t-value="request.env['portfolio.module'].sudo().search_count([])"/>
+                    <!-- Explore button moved to the bottom of this section -->
+                    <div class="text-center mt-5 pt-4" >
+                        <!-- Removed display: inline-block so it behaves exactly like the original one -->
+                        <a href="/my-modules" class="cta-kinetic" style="text-decoration: none;">
+                            <span class="kinetic-text">EXPLORE</span>
+                            <span class="kinetic-text outline">MORE (<t t-esc="total_modules_count"/>)</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Auto Redirect Modal -->
+                    <div class="modal fade" id="autoRedirectModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content text-center p-4 shadow-lg border-0" style="border-radius: 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+                                <div class="modal-body pb-0">
+                                    <div class="mb-4">
+                                        <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-3" style="color: #0f172a;">Have you seen my more modules?</h3>
+                                    <p class="text-muted mb-4">You are being redirected to explore all my custom Odoo modules in <span id="redirectCountdown" class="fw-bold text-primary fs-5">4</span> seconds...</p>
+                                    <a href="/my-modules" class="btn btn-primary rounded-pill fw-bold px-5 py-2 mb-3 w-100 shadow-sm" style="background: linear-gradient(135deg, #3b82f6, #2563eb); border: none;">Explore Now</a>
+                                    <button type="button" class="btn btn-link text-muted text-decoration-none" onclick="cancelAutoRedirect()" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+</odoo>

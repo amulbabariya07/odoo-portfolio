@@ -34,12 +34,12 @@ class PortfolioProfile(models.Model):
     skill_ids = fields.One2many('portfolio.skill', 'profile_id', string='Skills')
     language_ids = fields.One2many('portfolio.language', 'profile_id', string='Languages')
 
-    @api.depends('experience_ids.experience_duration')
+    @api.depends('experience_ids.experience_duration', 'experience_ids.employment_type')
     def _compute_total_experience(self):
         for record in self:
             total_months = 0
             for exp in record.experience_ids:
-                if exp.start_date:
+                if exp.start_date and exp.employment_type != 'internship':
                     end = exp.end_date or fields.Date.today()
                     if end > exp.start_date:
                         delta = end - exp.start_date

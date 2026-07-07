@@ -33,13 +33,18 @@ class PortfolioController(http.Controller):
             return request.redirect(error_url)
 
         try:
-            attachment = kw.get('attachment')
-            attachment_data = False
-            attachment_name = ''
-            if attachment and hasattr(attachment, 'read'):
-                import base64
-                attachment_data = base64.b64encode(attachment.read())
-                attachment_name = attachment.filename
+            attachments = request.httprequest.files.getlist('attachment')
+            attachment_commands = []
+            import base64
+            for att in attachments:
+                if att and hasattr(att, 'read'):
+                    filename = att.filename
+                    if filename:
+                        attachment_commands.append((0, 0, {
+                            'name': filename,
+                            'type': 'binary',
+                            'datas': base64.b64encode(att.read()),
+                        }))
 
             print("CREATING RECORD...")
             record = request.env['portfolio.contact'].sudo().create({
@@ -47,10 +52,10 @@ class PortfolioController(http.Controller):
                 'email': kw.get('email'),
                 'phone': kw.get('phone'),
                 'description': kw.get('description'),
-                'attachment': attachment_data,
-                'attachment_name': attachment_name,
+                'attachment_ids': attachment_commands,
             })
             print("RECORD CREATED SUCCESSFULLY! ID:", record.id)
+
             return request.redirect(redirect_url)
         except Exception as e:
             print("EXCEPTION OCCURRED DURING CREATION:", str(e))

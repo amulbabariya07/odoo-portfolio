@@ -11,6 +11,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/website_data.xml',
+        'data/mail_template_data.xml',
         'views/portfolio_profile_views.xml',
         'views/portfolio_education_views.xml',
         'views/portfolio_experience_views.xml',
