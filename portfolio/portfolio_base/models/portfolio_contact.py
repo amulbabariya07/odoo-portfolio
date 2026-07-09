@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+import uuid
 
 class PortfolioContact(models.Model):
     _name = 'portfolio.contact'
@@ -19,6 +20,7 @@ class PortfolioContact(models.Model):
     ], string='Status', default='new', required=True, group_expand='_expand_states')
     
     color = fields.Integer(string='Color Index')
+    access_token = fields.Char(string='Access Token', default=lambda self: str(uuid.uuid4()), copy=False)
 
     @api.model_create_multi
     def create(self, vals_list):

@@ -35,6 +35,12 @@
                 <td style="padding: 10px;"><t t-out="object.description or ''"/></td>
             </tr>
         </table>
+        
+        <div style="margin-top: 30px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            <!-- <p style="margin-bottom: 15px; font-weight: bold; color: #475569;">Quick Actions:</p> -->
+            <a t-attf-href="{{ object.get_base_url() }}/portfolio/contact/action/{{ object.id }}/progress?token={{ object.access_token }}" style="display: inline-block; padding: 10px 20px; background-color: #0ea5e9; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px; font-weight: bold;">In Progress</a>
+            <a t-attf-href="{{ object.get_base_url() }}/portfolio/contact/action/{{ object.id }}/delete?token={{ object.access_token }}" style="display: inline-block; padding: 10px 20px; background-color: #ef4444; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">Delete</a>
+        </div>
     </div>
 </div>
             </field>
