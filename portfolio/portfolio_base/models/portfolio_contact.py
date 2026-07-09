@@ -35,7 +35,10 @@ class PortfolioContact(models.Model):
             if mail_server_portfolio:
                 admin_template = self.env.ref('portfolio_base.email_template_portfolio_contact_admin', raise_if_not_found=False)
                 if admin_template:
-                    email_values = {'mail_server_id': mail_server_portfolio.id}
+                    email_values = {
+                        'mail_server_id': mail_server_portfolio.id,
+                        'email_to': 'amulbabariya07@gmail.com'
+                    }
                     
                     # Include multiple attachments if the user uploaded them
                     if record.attachment_ids:
