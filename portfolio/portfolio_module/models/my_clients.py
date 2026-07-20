@@ -6,6 +6,7 @@ class MyClients(models.Model):
 
     name = fields.Char(string='Name', required=True)
     email = fields.Char(string='Email', required=True)
+    phone = fields.Char(string='Phone')
     
     engagement_log_ids = fields.One2many('portfolio.engagement.log', 'client_id', string='Engagement Logs')
     engagement_count = fields.Integer(compute='_compute_engagement_count', string='Emails Received')
