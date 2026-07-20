@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_my_clients_tree" model="ir.ui.view">
+        <field name="name">my.clients.tree</field>
+        <field name="model">my.clients</field>
+        <field name="arch" type="xml">
+            <list string="My Clients">
+                <field name="name"/>
+                <field name="email"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_my_clients_form" model="ir.ui.view">
+        <field name="name">my.clients.form</field>
+        <field name="model">my.clients</field>
+        <field name="arch" type="xml">
+            <form string="Client">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_engagement_logs" type="object" class="oe_stat_button" icon="fa-envelope">
+                            <field name="engagement_count" widget="statinfo" string="Emails Received"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="email" widget="email"/>
+                    </group>
+                    <notebook>
+                        <page string="Engagement Emails">
+                            <field name="engagement_log_ids" readonly="1">
+                                <list>
+                                    <field name="module_id"/>
+                                    <field name="create_date" string="Sent Date"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_my_clients" model="ir.actions.act_window">
+        <field name="name">My Clients</field>
+        <field name="res_model">my.clients</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_my_clients" name="My Clients" action="action_my_clients" sequence="30" web_icon="portfolio_module,static/img/clients_icon.png"/>
+</odoo>
