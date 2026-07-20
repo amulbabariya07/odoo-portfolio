@@ -95,7 +95,7 @@ class PortfolioModule(models.Model):
             if mail_server:
                 email_values['mail_server_id'] = mail_server.id
                 
-            template.with_context(ctx).send_mail(log.id, force_send=True, email_values=email_values)
+            template.with_context(ctx).send_mail(log.id, force_send=False, email_values=email_values)
             count += 1
             
         return {
