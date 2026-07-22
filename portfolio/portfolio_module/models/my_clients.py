@@ -8,6 +8,7 @@ class MyClients(models.Model):
     name = fields.Char(string='Name', required=True)
     email = fields.Char(string='Email', required=True)
     phone = fields.Char(string='Phone')
+    active = fields.Boolean(string="Active", default=True)
     
     engagement_log_ids = fields.One2many('portfolio.engagement.log', 'client_id', string='Engagement Logs')
     engagement_count = fields.Integer(compute='_compute_engagement_count', string='Emails Received')
@@ -51,7 +52,7 @@ class MyClients(models.Model):
 
         count = 0
         for client in self:
-            if not client.email:
+            if not client.active or not client.email:
                 continue
 
             ctx = dict(self.env.context)

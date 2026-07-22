@@ -21,6 +21,7 @@
                     <button name="action_send_welcome_email" string="Send Welcome Msg" type="object" class="btn-primary" icon="fa-paper-plane"/>
                 </header>
                 <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_open_engagement_logs" type="object" class="oe_stat_button" icon="fa-envelope">
                             <field name="engagement_count" widget="statinfo" string="Emails Received"/>
@@ -35,6 +36,7 @@
                         <group>
                             <field name="email" widget="email"/>
                             <field name="phone" widget="phone"/>
+                            <field name="active" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
