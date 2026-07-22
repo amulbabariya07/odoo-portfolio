@@ -8,6 +8,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/mail_template_engagement.xml',
+        'data/mail_template_welcome.xml',
         'views/portfolio_module_views.xml',
         'views/portfolio_module_templates.xml',
         'views/my_clients_views.xml',

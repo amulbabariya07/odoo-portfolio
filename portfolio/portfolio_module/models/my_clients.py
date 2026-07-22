@@ -39,3 +39,40 @@ class MyClients(models.Model):
             'domain': [('client_id', '=', self.id)],
             'context': {'default_client_id': self.id},
         }
+
+    def action_send_welcome_email(self):
+        template = self.env.ref('portfolio_module.email_template_welcome_client')
+
+        # Get up to 6 featured modules
+        featured_modules = self.env['portfolio.module'].search([('is_featured', '=', True)], limit=6)
+
+        # Explicitly find outgoing mail server
+        mail_server = self.env['ir.mail_server'].sudo().search([('smtp_user', '=', 'amulbabariya07@gmail.com')], limit=1)
+
+        count = 0
+        for client in self:
+            if not client.email:
+                continue
+
+            ctx = dict(self.env.context)
+            ctx['featured_modules'] = featured_modules
+
+            email_values = {
+                'email_to': client.email,
+            }
+            if mail_server:
+                email_values['mail_server_id'] = mail_server.id
+
+            template.with_context(ctx).send_mail(client.id, force_send=True, email_values=email_values)
+            count += 1
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Welcome Emails Sent',
+                'message': f'Successfully sent {count} welcome emails!',
+                'type': 'success',
+                'sticky': False,
+            }
+        }

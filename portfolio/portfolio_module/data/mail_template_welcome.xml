@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="email_template_welcome_client" model="mail.template">
+            <field name="name">Portfolio: Welcome Client</field>
+            <field name="model_id" ref="portfolio_module.model_my_clients"/>
+            <field name="subject">Expert Odoo Developer Available for Your Next Big Project</field>
+            <field name="email_from">Amul Babariya &lt;amulbabariya07@gmail.com&gt;</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="description">Welcome email with portfolio showcasing featured modules</field>
+            <field name="body_html" type="html">
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+    
+    <!-- Clean Top Section -->
+    <div style="padding: 30px 20px 10px 20px;">
+        <p style="font-size: 16px; margin: 0 0 15px 0; color: #111827;">
+            Hello <strong><t t-out="object.name or 'there'"/></strong>,
+        </p>
+        <p style="font-size: 15px; line-height: 1.6; margin: 0 0 15px 0; color: #4b5563;">
+            I am Amul Babariya, a freelance Odoo Developer. I specialize in building custom Odoo modules, designing beautiful frontend UI, and seamlessly integrating third-party apps.
+        </p>
+        <p style="font-size: 15px; line-height: 1.6; margin: 0; color: #4b5563;">
+            Whether you need a brand-new custom module or performance improvements to your existing Odoo system, I can help you achieve your goals effectively.
+        </p>
+    </div>
+
+    <!-- Divider -->
+    <div style="padding: 0 20px;">
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;"/>
+    </div>
+    
+    <h3 style="text-align: center; font-size: 18px; color: #1f2937; margin: 0 0 20px 0;">See My Latest Work</h3>
+    
+    <!-- Bulletproof Table Grid (2 columns) -->
+    <div style="padding: 0 15px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="table-layout: fixed;">
+            <tbody>
+                <!-- We will iterate over chunks of 2 modules to create rows -->
+                <t t-set="modules" t-value="ctx.get('featured_modules', [])"/>
+                <t t-set="total" t-value="len(modules)"/>
+                <t t-foreach="range(0, total, 2)" t-as="i">
+                    <tr>
+                        <td width="50%" valign="top" style="padding: 5px;">
+                            <t t-if="i &lt; total">
+                                <t t-set="mod1" t-value="modules[i]"/>
+                                <div style="border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden; background: #f9fafb;">
+                                    <t t-if="mod1.image">
+                                        <img t-attf-src="{{ object.env['ir.config_parameter'].sudo().get_param('web.base.url') }}/web/image/portfolio.module/{{ mod1.id }}/image" style="width: 100%; height: auto; display: block; border: none;" alt="Module Image"/>
+                                    </t>
+                                </div>
+                            </t>
+                        </td>
+                        <td width="50%" valign="top" style="padding: 5px;">
+                            <t t-if="i + 1 &lt; total">
+                                <t t-set="mod2" t-value="modules[i+1]"/>
+                                <div style="border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden; background: #f9fafb;">
+                                    <t t-if="mod2.image">
+                                        <img t-attf-src="{{ object.env['ir.config_parameter'].sudo().get_param('web.base.url') }}/web/image/portfolio.module/{{ mod2.id }}/image" style="width: 100%; height: auto; display: block; border: none;" alt="Module Image"/>
+                                    </t>
+                                </div>
+                            </t>
+                        </td>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- View All Button -->
+    <div style="text-align: center; margin: 25px 0;">
+        <a href="https://amulbabariya.site/my-modules" style="background-color: #0284c7; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 15px; display: inline-block;">
+            View All Modules
+        </a>
+    </div>
+
+    <!-- Clean Footer -->
+    <div style="background-color: #f3f4f6; padding: 30px 20px; border-top: 1px solid #e5e7eb; border-radius: 0 0 12px 12px;">
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            <p style="margin: 0 0 10px 0; font-size: 15px; color: #374151; font-weight: bold;">
+                Looking for a dedicated freelancer?
+            </p>
+            <a href="mailto:amulbabariya07@gmail.com" style="color: #0284c7; text-decoration: underline; font-size: 15px;">
+                Let's connect and discuss your project!
+            </a>
+        </div>
+        
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td width="50%" align="center" style="border-right: 1px solid #d1d5db;">
+                    <a href="https://amulbabariya.site" style="color: #4b5563; text-decoration: none; font-size: 13px; font-weight: bold;">
+                        🌐 My Portfolio Website
+                    </a>
+                </td>
+                <td width="50%" align="center">
+                    <a href="https://amulbabariya.site/my-modules" style="color: #4b5563; text-decoration: none; font-size: 13px; font-weight: bold;">
+                        💼 Explore All Works
+                    </a>
+                </td>
+            </tr>
+        </table>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <p style="margin: 0; font-size: 13px; color: #6b7280;">Best regards,</p>
+            <p style="margin: 5px 0 0 0; font-size: 15px; color: #111827; font-weight: bold;">
+                <t t-out="user.name or 'Amul Babariya'"/>
+            </p>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">
+                Odoo Expert &amp; Freelance Developer
+            </p>
+        </div>
+
+    </div>
+</div>
+            </field>
+        </record>
+    </data>
+</odoo>

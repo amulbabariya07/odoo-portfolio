@@ -17,6 +17,9 @@
         <field name="model">my.clients</field>
         <field name="arch" type="xml">
             <form string="Client">
+                <header>
+                    <button name="action_send_welcome_email" string="Send Welcome Msg" type="object" class="btn-primary" icon="fa-paper-plane"/>
+                </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_open_engagement_logs" type="object" class="oe_stat_button" icon="fa-envelope">
