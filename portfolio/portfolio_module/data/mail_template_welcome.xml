@@ -45,7 +45,7 @@
                                 <t t-set="mod1" t-value="modules[i]"/>
                                 <div style="border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden; background: #f9fafb;">
                                     <t t-if="mod1.image">
-                                        <img t-attf-src="{{ object.env['ir.config_parameter'].sudo().get_param('web.base.url') }}/web/image/portfolio.module/{{ mod1.id }}/image" style="width: 100%; height: auto; display: block; border: none;" alt="Module Image"/>
+                                        <img t-att-src="image_data_uri(mod1.image)" style="width: 100%; height: auto; display: block; border: none;" alt="Module Image"/>
                                     </t>
                                 </div>
                             </t>
@@ -55,7 +55,7 @@
                                 <t t-set="mod2" t-value="modules[i+1]"/>
                                 <div style="border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden; background: #f9fafb;">
                                     <t t-if="mod2.image">
-                                        <img t-attf-src="{{ object.env['ir.config_parameter'].sudo().get_param('web.base.url') }}/web/image/portfolio.module/{{ mod2.id }}/image" style="width: 100%; height: auto; display: block; border: none;" alt="Module Image"/>
+                                        <img t-att-src="image_data_uri(mod2.image)" style="width: 100%; height: auto; display: block; border: none;" alt="Module Image"/>
                                     </t>
                                 </div>
                             </t>
