@@ -30,7 +30,7 @@
     <div style="padding: 0 20px; text-align: center;">
         <t t-if="object.module_id.image">
             <div style="margin-bottom: 20px;">
-                <img t-att-src="image_data_uri(object.module_id.image)" style="max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #e5e7eb; display: inline-block;" alt="Module Image"/>
+                <img t-attf-src="{{ object.get_base_url() }}/web/image/portfolio.module/{{ object.module_id.id }}/image" style="max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #e5e7eb; display: inline-block;" alt="Module Image"/>
             </div>
         </t>
         
