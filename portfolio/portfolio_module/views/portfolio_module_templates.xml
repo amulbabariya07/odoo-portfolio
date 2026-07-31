@@ -5,6 +5,13 @@
             <t t-set="no_header" t-value="True"/>
             <t t-set="no_footer" t-value="True"/>
             <t t-set="head">
+                <!-- SEO & OpenGraph Meta Tags for Link Preview -->
+                <meta property="og:title" content="Amul Babariya - Odoo Portfolio"/>
+                <meta property="og:description" content="Explore my latest custom Odoo modules and end-to-end development expertise."/>
+                <meta property="og:url" t-att-content="request.httprequest.url"/>
+                <meta property="og:type" content="website"/>
+                <meta name="twitter:card" content="summary_large_image"/>
+                
                 <!-- Three.js Library -->
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
                 <!-- GSAP & ScrollTrigger -->
@@ -334,6 +341,14 @@
             <t t-set="no_header" t-value="True"/>
             <t t-set="no_footer" t-value="True"/>
             <t t-set="head">
+                <!-- SEO & OpenGraph Meta Tags for Module Link Preview -->
+                <meta property="og:title" t-att-content="module.name + ' - Odoo Module'"/>
+                <meta property="og:description" t-att-content="module.short_description or 'Check out this custom Odoo module.'"/>
+                <meta property="og:image" t-att-content="request.httprequest.url_root + 'web/image/portfolio.module/' + str(module.id) + '/image'"/>
+                <meta property="og:url" t-att-content="request.httprequest.url"/>
+                <meta property="og:type" content="website"/>
+                <meta name="twitter:card" content="summary_large_image"/>
+                
                 <!-- Three.js Library -->
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
                 <!-- GSAP & ScrollTrigger -->

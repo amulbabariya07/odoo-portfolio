@@ -4,6 +4,7 @@ from odoo.exceptions import ValidationError
 class MyClients(models.Model):
     _name = 'my.clients'
     _description = 'My Clients'
+    _order = 'id desc'
 
     name = fields.Char(string='Name', required=True)
     email = fields.Char(string='Email', required=True)
