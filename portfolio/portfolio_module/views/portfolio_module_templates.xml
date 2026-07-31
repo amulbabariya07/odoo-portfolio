@@ -340,13 +340,16 @@
         <t t-call="website.layout">
             <t t-set="no_header" t-value="True"/>
             <t t-set="no_footer" t-value="True"/>
+            <!-- Set Dynamic Title for Browser and SEO -->
+            <t t-set="title" t-value="module.name"/>
+            
             <t t-set="head">
                 <!-- SEO & OpenGraph Meta Tags for Module Link Preview -->
-                <meta property="og:title" t-att-content="module.name + ' - Odoo Module'"/>
+                <meta property="og:title" t-att-content="module.name"/>
                 <meta property="og:description" t-att-content="module.short_description or 'Check out this custom Odoo module.'"/>
                 <meta property="og:image" t-att-content="request.httprequest.url_root + 'web/image/portfolio.module/' + str(module.id) + '/image'"/>
                 <meta property="og:url" t-att-content="request.httprequest.url"/>
-                <meta property="og:type" content="website"/>
+                <meta property="og:type" content="article"/>
                 <meta name="twitter:card" content="summary_large_image"/>
                 
                 <!-- Three.js Library -->
