@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Email Temp Views -->
+    <record id="view_email_temp_tree" model="ir.ui.view">
+        <field name="name">email.temp.tree</field>
+        <field name="model">email.temp</field>
+        <field name="arch" type="xml">
+            <list string="Email Templates">
+                <field name="name"/>
+                <field name="subject"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_email_temp_form" model="ir.ui.view">
+        <field name="name">email.temp.form</field>
+        <field name="model">email.temp</field>
+        <field name="arch" type="xml">
+            <form string="Email Template">
+                <header>
+                    <button name="action_send_all_clients" string="Send to All Clients" type="object" class="btn-primary" icon="fa-paper-plane"/>
+                    <button name="action_send_test_client" string="Send Test" type="object" class="btn-secondary" icon="fa-paper-plane" invisible="not test_client_id"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_engagement_logs" type="object" class="oe_stat_button" icon="fa-envelope">
+                            <field name="engagement_count" widget="statinfo" string="Emails Sent"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Template Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="subject"/>
+                            <field name="editor_mode" widget="radio" options="{'horizontal': true}"/>
+                        </group>
+                        <group>
+                            <field name="test_client_id" placeholder="Select a client to test..."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Drag &amp; Drop Editor" invisible="editor_mode == 'code'">
+                            <field name="mailing_model_id" invisible="1"/>
+                            <div class="position-relative">
+                                <field name="body_arch" class="o_mail_body_mailing" widget="mass_mailing_html"
+                                    options="{
+                                        'inline_field': 'body_html',
+                                    }"/>
+                                <field name="body_html" invisible="1"/>
+                            </div>
+                        </page>
+                        <page string="Code Editor" invisible="editor_mode == 'drag_drop'">
+                            <field name="body_raw_html" widget="code" options="{'mode': 'xml'}"/>
+                        </page>
+                        <page string="Code Preview (Visual Edit)" invisible="editor_mode == 'drag_drop'">
+                            <field name="body_raw_html" widget="html" options="{'cssEdit': true, 'codeview': true}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_email_temp" model="ir.actions.act_window">
+        <field name="name">Email Templates</field>
+        <field name="res_model">email.temp</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_email_temp" name="Email Templates" parent="portfolio_module.menu_portfolio_module_root" action="action_email_temp" sequence="30"/>
+
+</odoo>

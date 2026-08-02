@@ -4,7 +4,7 @@
     'author': 'Amul Babariya',
     'category': 'Website',
     'summary': 'Showcase your custom Odoo modules on your portfolio website.',
-    'depends': ['website', 'mail'],
+    'depends': ['website', 'mail', 'mass_mailing'],
     'data': [
         'security/ir.model.access.csv',
         'data/mail_template_engagement.xml',
@@ -12,6 +12,7 @@
         'views/portfolio_module_views.xml',
         'views/portfolio_module_templates.xml',
         'views/my_clients_views.xml',
+        'views/email_temp_views.xml',
     ],
     'assets': {
         'web.assets_frontend': [

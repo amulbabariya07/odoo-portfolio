@@ -5,3 +5,4 @@ access_portfolio_module_tag_public,portfolio.module.tag public,model_portfolio_m
 access_portfolio_module_public,portfolio.module public,model_portfolio_module,base.group_public,1,0,0,0
 access_portfolio_engagement_log,portfolio.engagement.log,model_portfolio_engagement_log,base.group_user,1,1,1,1
 access_my_clients,my.clients,model_my_clients,base.group_user,1,1,1,1
+access_email_temp,email.temp,model_email_temp,base.group_user,1,1,1,1
