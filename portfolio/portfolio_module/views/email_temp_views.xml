@@ -20,7 +20,7 @@
             <form string="Email Template">
                 <header>
                     <button name="action_send_all_clients" string="Send to All Clients" type="object" class="btn-primary" icon="fa-paper-plane"/>
-                    <button name="action_send_test_client" string="Send Test" type="object" class="btn-secondary" icon="fa-paper-plane" invisible="not test_client_id"/>
+                    <button name="action_send_personally" string="Send Personally" type="object" class="btn-secondary" icon="fa-paper-plane" invisible="not test_client_ids"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -39,7 +39,7 @@
                             <field name="editor_mode" widget="radio" options="{'horizontal': true}"/>
                         </group>
                         <group>
-                            <field name="test_client_id" placeholder="Select a client to test..."/>
+                            <field name="test_client_ids" widget="many2many_tags" placeholder="Select clients..."/>
                         </group>
                     </group>
                     <notebook>

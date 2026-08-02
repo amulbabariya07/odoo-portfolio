@@ -22,7 +22,7 @@ class EmailTemp(models.Model):
         default=lambda self: self.env['ir.model'].search([('model', '=', 'my.clients')], limit=1)
     )
     
-    test_client_id = fields.Many2one('my.clients', string='Test Client')
+    test_client_ids = fields.Many2many('my.clients', string='Select Clients (Personal Send)')
     
     @api.onchange('editor_mode')
     def _onchange_editor_mode(self):
@@ -87,21 +87,27 @@ class EmailTemp(models.Model):
         })
         return mail
 
-    def action_send_test_client(self):
+    def action_send_personally(self):
         self.ensure_one()
-        if not self.test_client_id:
-            raise UserError("Please select a Test Client first.")
-        if not self.test_client_id.email:
-            raise UserError("The selected client does not have an email address.")
+        if not self.test_client_ids:
+            raise UserError("Please select at least one client.")
             
-        self._create_and_send_mail(self.test_client_id, force_send=True)
+        count = 0
+        for client in self.test_client_ids:
+            if not client.email:
+                continue
+            self._create_and_send_mail(client, force_send=True)
+            count += 1
+            
+        if count == 0:
+            raise UserError("None of the selected clients have an email address.")
         
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Test Email Sent',
-                'message': f'Successfully sent test email to {self.test_client_id.name}!',
+                'title': 'Emails Sent',
+                'message': f'Successfully sent emails to {count} clients!',
                 'type': 'success',
                 'sticky': False,
             }
